@@ -19,3 +19,9 @@ DROP TRIGGER IF EXISTS protect_deposit_requests ON deposit_requests;
 CREATE TRIGGER protect_deposit_requests BEFORE UPDATE OR DELETE ON deposit_requests FOR EACH ROW EXECUTE FUNCTION immutable_finance();
 DROP TRIGGER IF EXISTS protect_deposit_reviews ON deposit_reviews;
 CREATE TRIGGER protect_deposit_reviews BEFORE UPDATE OR DELETE ON deposit_reviews FOR EACH ROW EXECUTE FUNCTION immutable_finance();
+
+ALTER TABLE deposit_methods ADD COLUMN IF NOT EXISTS qr_image TEXT;
+ALTER TABLE deposit_methods ADD COLUMN IF NOT EXISTS minimum_usd NUMERIC(38,18) NOT NULL DEFAULT 10 CHECK(minimum_usd>=10);
+ALTER TABLE deposit_requests ADD COLUMN IF NOT EXISTS usd_price NUMERIC(38,18);
+ALTER TABLE deposit_requests ADD COLUMN IF NOT EXISTS usd_value NUMERIC(38,18);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name TEXT NOT NULL DEFAULT '';

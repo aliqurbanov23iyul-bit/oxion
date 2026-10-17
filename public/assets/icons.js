@@ -1,4 +1,7 @@
 const paths = {
+  gift: "M3 8h18v4H3zM5 12v9h14v-9M12 8v13M12 8H8a3 3 0 1 1 3-3zM12 8h4a3 3 0 1 0-3-3z",
+  mail: "M3 5h18v14H3zM3 5l9 7 9-7",
+  logout: "M9 4H4v16h5M9 12h12m-5-5 5 5-5 5",
   menu: "M4 6h16M4 12h16M4 18h16",
   copy: "M9 9h11v11H9zM5 15H3V3h12v2",
   user: "M20 21v-2a7 7 0 0 0-14 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",

@@ -19,7 +19,7 @@ export async function renderAdmin({ standard, date }) {
     return;
   }
   standard(
-    `<div class="admin-layout"><aside class="panel admin-nav">${["user", "deposit", "withdraw", "orders", "testnet", "tickets", "promotions", "audit"].map((k, i) => `<button data-section="${k}" class="${i === 0 ? "active" : ""}">${t(k)}</button>`).join("")}</aside><div class="stack" id="admin-body"></div></div>`,
+    `<div class="admin-layout"><aside class="panel admin-nav">${["user", "deposit", "withdraw", "orders", "tickets", "promotions", "audit"].map((k, i) => `<button data-section="${k}" class="${i === 0 ? "active" : ""}">${t(k)}</button>`).join("")}<details><summary>${t("advancedTools")}</summary><button data-section="testnet">Binance Testnet</button></details></aside><div class="stack" id="admin-body"></div></div>`,
   );
   const overview = await api("/admin/overview");
   let section = "user";

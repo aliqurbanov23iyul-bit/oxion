@@ -1,5 +1,44 @@
 export const languages = ["az", "en", "tr", "ru"];
 const data = {
+  cryptoOnly: [
+    "Kriptovalyuta",
+    "Cryptocurrency",
+    "Kripto para",
+    "Криптовалюта",
+  ],
+  withdrawUnavailable: [
+    "Çıxarış göndərişi hələ qoşulmayıb. Bu forma yalnız Sepolia sınaq sorğusudur; kripto göndərmir.",
+    "Withdrawals are not connected yet. This form creates a Sepolia test request only; no crypto is sent.",
+    "Çekim henüz bağlı değil. Bu form yalnızca Sepolia test talebi oluşturur; kripto göndermez.",
+    "Вывод пока не подключён. Форма создаёт только тестовую заявку Sepolia, без отправки криптовалюты.",
+  ],
+
+  depositManualInfo: [
+    "Depozit səhifəsində aktiv və şəbəkə seçin, göstərilən ünvana göndərin, məbləğ və TXID ilə sorğu yaradın. Depozit admin yoxlamasından sonra balansa yazılır. Minimum 10 USDT qarşılığıdır.",
+    "Select an asset and network on the deposit page, transfer to the displayed address, then submit the amount and TXID. Deposits are credited after administrator review. Minimum: 10 USDT equivalent.",
+    "Yatırma sayfasında varlık ve ağ seçin, gösterilen adrese gönderin, tutar ve TXID ile talep oluşturun. Yönetici kontrolünden sonra bakiye eklenir. Minimum: 10 USDT karşılığı.",
+    "Выберите актив и сеть, отправьте на указанный адрес, затем подайте заявку с суммой и TXID. Зачисление после проверки администратором. Минимум: эквивалент 10 USDT.",
+  ],
+
+  advancedTools: [
+    "Texniki alətlər",
+    "Technical tools",
+    "Teknik araçlar",
+    "Технические инструменты",
+  ],
+  qrImageError: [
+    "QR şəkli PNG/JPG formatında və 100 KB-dan kiçik olmalıdır.",
+    "QR image must be PNG/JPG and smaller than 100 KB.",
+    "QR resmi PNG/JPG ve 100 KB altında olmalıdır.",
+    "QR должен быть PNG/JPG размером менее 100 КБ.",
+  ],
+  depositMinimumUsd: [
+    "Minimum depozit 10 USDT dəyərindədir. Cari qiymətə görə məbləği artırın.",
+    "Minimum deposit is 10 USDT equivalent. Increase the amount at the current price.",
+    "Minimum yatırma 10 USDT karşılığıdır. Güncel fiyata göre tutarı artırın.",
+    "Минимальный депозит — эквивалент 10 USDT. Увеличьте сумму по текущей цене.",
+  ],
+
   home: ["Ana səhifə", "Home", "Ana sayfa", "Главная"],
   markets: ["Bazarlar", "Markets", "Piyasalar", "Рынки"],
   trade: ["Ticarət", "Trade", "Alım satım", "Торговля"],
@@ -440,10 +479,10 @@ const data = {
     "Войдите, чтобы продолжить.",
   ],
   available: [
-    "Çıxarıla bilən balans",
-    "Withdrawable balance",
-    "Çekilebilir bakiye",
-    "Доступно к выводу",
+    "Mövcud balans",
+    "Available balance",
+    "Kullanılabilir bakiye",
+    "Доступный баланс",
   ],
   locked: [
     "Əmrlər və sorğular üçün bloklanıb",
@@ -464,10 +503,10 @@ const data = {
     "Ручная корректировка · без вывода",
   ],
   balanceNote: [
-    "Mövcud, bloklanmış və bonus balanslarını ayrıca izləyin. Manual düzəliş və bonus çıxarıla bilən vəsait sayılmır. Real depozit və çıxarış bağlıdır; mövcud maliyyə qeydləri simulyasiya rejimindədir.",
-    "Available, reserved and bonus balances are shown separately. Manual credits and bonuses are not withdrawable funds. Live deposits and withdrawals are disabled; current financial records are simulated.",
-    "Kullanılabilir, bloke ve bonus bakiyeler ayrıdır. Manuel düzeltmeler ve bonuslar çekilebilir fon sayılmaz. Gerçek yatırma ve çekme kapalıdır; mevcut mali kayıtlar simülasyon kapsamındadır.",
-    "Доступный, зарезервированный и бонусный балансы показаны отдельно. Ручные корректировки и бонусы не доступны к выводу. Реальные переводы отключены; текущие финансовые записи относятся к симуляции.",
+    "Mövcud, bloklanmış və bonus balansları ayrıdır. Manual balans düzəlişləri və bonuslar çıxarıla bilən vəsait sayılmır. Depozitlər admin yoxlamasından sonra yazılır; çıxarış göndərişi ayrıca xidmət bağlantısı tələb edir.",
+    "Available, reserved and bonus balances are separate. Manual balance adjustments and bonuses are not withdrawable funds. Deposits are credited after administrator review; withdrawal sending requires a separate service connection.",
+    "Kullanılabilir, bloke ve bonus bakiyeler ayrıdır. Manuel bakiye düzeltmeleri ve bonuslar çekilemez. Yatırmalar yönetici kontrolüyle eklenir; çekim gönderimi ayrı bir hizmet bağlantısı gerektirir.",
+    "Доступный, зарезервированный и бонусный балансы разделены. Ручные корректировки и бонусы недоступны к выводу. Депозиты зачисляет администратор; отправка вывода требует отдельного подключения.",
   ],
   network: ["Şəbəkə", "Network", "Ağ", "Сеть"],
   address: ["Ünvan", "Address", "Adres", "Адрес"],
@@ -629,10 +668,10 @@ const data = {
     "Доступна реальная торговля?",
   ],
   faq1a: [
-    "Bazar məlumatları açıq provayder API-si ilə yenilənir. Real əmrlərin birjaya göndərilməsi və real vəsait köçürmələri hazırda aktiv deyil. Əmr ekranındakı mövcud icra simulyasiyadır.",
-    "Market data updates through a public provider API. Live exchange orders and fund transfers are currently unavailable. Current order execution is simulated.",
-    "Piyasa verileri sağlayıcının açık API’sinden güncellenir. Gerçek borsa emirleri ve fon transferleri henüz aktif değildir. Mevcut emir işlemleri simülasyondur.",
-    "Рыночные данные обновляются через публичный API. Реальные биржевые ордера и переводы средств пока недоступны. Текущее исполнение моделируется.",
+    "Bazar qiymətləri canlı yenilənir. Depozitlər admin tərəfindən əl ilə yoxlanılır. Birjaya real əmr göndərilməsi və avtomatik çıxarış qoşulmayıb; əmr icrası simulyasiyadır.",
+    "Market prices update live. Deposits are reviewed manually by administrators. Live exchange execution and automatic withdrawals are not connected; order execution is simulated.",
+    "Piyasa fiyatları canlı güncellenir. Yatırmalar yöneticilerce kontrol edilir. Gerçek borsa emri ve otomatik çekme bağlı değildir; emir işlemleri simülasyondur.",
+    "Цены обновляются в реальном времени. Депозиты проверяет администратор. Реальное биржевое исполнение и автоматический вывод не подключены; исполнение ордеров моделируется.",
   ],
   faq2: [
     "Depozit bonusu necə işləyir?",
@@ -1133,6 +1172,8 @@ export function errorText(code) {
     INVALID_EMAIL: "invalidForm",
     INVALID_FORM: "invalidForm",
     INVALID_TXID: "invalidForm",
+    INVALID_QR_IMAGE: "qrImageError",
+    DEPOSIT_MINIMUM_USD: "depositMinimumUsd",
     UNVERIFIED_DEPOSIT: "invalidForm",
     REASON_REQUIRED: "invalidForm",
     ALREADY_EXISTS: "alreadyExists",

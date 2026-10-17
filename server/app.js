@@ -1,4 +1,9 @@
-import { saveMethod, submitDeposit, reviewDeposit } from "./manual-deposits.js";
+import {
+  saveMethod,
+  submitDeposit,
+  reviewDeposit,
+  depositPrice,
+} from "./manual-deposits.js";
 import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -90,7 +95,7 @@ export function createApp(db, env = process.env, services = {}) {
       },
     }),
   );
-  app.use(express.json({ limit: "48kb" }), cookies());
+  app.use(express.json({ limit: "200kb" }), cookies());
   app.use(
     "/api",
     rateLimit({
@@ -117,7 +122,7 @@ export function createApp(db, env = process.env, services = {}) {
       if (req.cookies.sid) {
         const s = (
           await db.query(
-            "SELECT s.*,u.uid,u.email,u.role,u.verified,u.language,u.totp_enabled,u.totp_secret FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.hash=$1 AND s.expires_at>now()",
+            "SELECT s.*,u.uid,u.email,coalesce(to_jsonb(u)->>'display_name','') AS display_name,u.role,u.verified,u.language,u.totp_enabled,u.totp_secret FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.hash=$1 AND s.expires_at>now()",
             [hash(req.cookies.sid)],
           )
         ).rows[0];
@@ -298,6 +303,7 @@ export function createApp(db, env = process.env, services = {}) {
               id: req.auth.user_id,
               uid: req.auth.uid,
               email: req.auth.email,
+              display_name: req.auth.display_name,
               role: req.auth.role,
               verified: req.auth.verified,
               language: req.auth.language,
@@ -557,8 +563,19 @@ export function createApp(db, env = process.env, services = {}) {
   app.patch("/api/profile", auth, async (req, res) => {
     if (!["az", "en", "tr", "ru"].includes(req.body.language))
       fail(400, "INVALID_LANGUAGE");
-    await db.query("UPDATE users SET language=$1 WHERE id=$2", [
+    const name =
+      req.body.display_name === undefined
+        ? req.auth.display_name
+        : req.body.display_name;
+    if (
+      typeof name !== "string" ||
+      name.trim().length > 60 ||
+      /[\u0000-\u001f<>]/.test(name)
+    )
+      fail(400, "INVALID_FORM");
+    await db.query("UPDATE users SET language=$1,display_name=$2 WHERE id=$3", [
       req.body.language,
+      name.trim(),
       req.auth.user_id,
     ]);
     res.json({ status: "ok" });
@@ -615,32 +632,58 @@ export function createApp(db, env = process.env, services = {}) {
   app.get("/api/deposit/methods/:id/qr", auth, async (req, res) => {
     const m = (
       await db.query(
-        "SELECT address FROM deposit_methods WHERE id=$1 AND active=TRUE",
+        "SELECT address,qr_image FROM deposit_methods WHERE id=$1 AND active=TRUE",
         [req.params.id],
       )
     ).rows[0];
     if (!m) fail(404, "NOT_FOUND");
-    res
-      .type("svg")
-      .send(
-        await QRCode.toString(m.address, {
-          type: "svg",
-          margin: 2,
-          width: 200,
-        }),
-      );
+    if (m.qr_image) {
+      const [header, data] = m.qr_image.split(",");
+      return res
+        .type(header.includes("png") ? "png" : "jpeg")
+        .send(Buffer.from(data, "base64"));
+    }
+    res.type("svg").send(
+      await QRCode.toString(m.address, {
+        type: "svg",
+        margin: 2,
+        width: 200,
+      }),
+    );
   });
   app.get("/api/deposit/methods", auth, async (req, res) =>
     res.json({
       items: (
         await db.query(
-          "SELECT id,asset,network,address,memo,minimum,confirmations FROM deposit_methods WHERE active=TRUE ORDER BY created_at",
+          "SELECT id,asset,network,address,memo,minimum,minimum_usd,confirmations FROM deposit_methods WHERE active=TRUE ORDER BY created_at",
         )
       ).rows,
     }),
   );
+  app.get("/api/deposit/methods/:id/minimum", auth, async (req, res) => {
+    const m = (
+      await db.query(
+        "SELECT asset,minimum_usd FROM deposit_methods WHERE id=$1 AND active=TRUE",
+        [req.params.id],
+      )
+    ).rows[0];
+    if (!m) fail(404, "NOT_FOUND");
+    const price = await depositPrice(m.asset, markets);
+    res.json({
+      asset: m.asset,
+      minimum_usd: m.minimum_usd,
+      minimum_amount: new D(m.minimum_usd)
+        .div(price)
+        .toDecimalPlaces(18, D.ROUND_UP)
+        .toFixed(18),
+      price: price.toFixed(18),
+      quoted_at: new Date().toISOString(),
+    });
+  });
   app.post("/api/deposit/requests", auth, verified, async (req, res) =>
-    res.status(201).json(await submitDeposit(db, req.auth.user_id, req.body)),
+    res
+      .status(201)
+      .json(await submitDeposit(db, req.auth.user_id, req.body, markets)),
   );
   app.get("/api/deposit/requests", auth, async (req, res) =>
     res.json({
@@ -780,7 +823,9 @@ export function createApp(db, env = process.env, services = {}) {
   app.get("/api/admin/deposit-methods", async (req, res) =>
     res.json({
       items: (
-        await db.query("SELECT * FROM deposit_methods ORDER BY created_at DESC")
+        await db.query(
+          "SELECT id,asset,network,address,memo,minimum,minimum_usd,confirmations,active,created_at,(qr_image IS NOT NULL) AS custom_qr FROM deposit_methods ORDER BY created_at DESC",
+        )
       ).rows,
     }),
   );

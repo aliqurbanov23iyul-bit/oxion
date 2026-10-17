@@ -1,3 +1,4 @@
+import { assetLogo } from "./asset-logos.js";
 import { icon } from "./icons.js";
 import { t, lang, setLanguage, languages, errorText } from "./i18n.js";
 import {
@@ -60,8 +61,7 @@ const symbols = {
   TON: "▽",
   USDT: "₮",
 };
-export const coin = (a) =>
-  `<span class="coin-icon ${esc(a)}">${symbols[a] || "◈"}</span>`;
+export const coin = (a) => assetLogo(a);
 const brand = `<a class="brand" href="/index.html" aria-label="OXION"><img src="/assets/oxion-logo.png" alt="OXION" width="218" height="109"></a>`;
 document.documentElement.lang = lang;
 document.title = "OXION · " + t(page);
@@ -81,7 +81,7 @@ const telegram =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 3.4 18.2 20c-.3 1.2-1 1.5-2 1l-5.2-3.9-2.5 2.4c-.3.3-.5.5-1 .5l.4-5.3L17.6 6c.4-.4-.1-.6-.6-.3L5 13.3l-5.1-1.6c-1.1-.3-1.1-1.1.2-1.6L20 2.4c.9-.3 1.7.2 1.6 1z"/></svg>';
 
 document.querySelector("#site-header").innerHTML =
-  `<a href="#main" class="skip">${t("home")}</a><header class="header"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" aria-label="${t("language")}">${languages.map((l) => `<option value="${l}" ${l === lang ? "selected" : ""}>${l.toUpperCase()}</option>`).join("")}</select>${me.user ? `${link("wallet", "account-shortcut")}${link("orders", "account-shortcut")}<details class="account-menu"><summary class="iconbtn" aria-label="${t("profile")}">${icon("user")}</summary><div class="account-dropdown"><strong>${esc(me.user.uid)}</strong><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "security", "wallet", "orders", "history"].map((k) => link(k)).join("")}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><details class="account-menu"><summary class="iconbtn" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details>` : `${link("login", "login-link")}${link("signup", "btn small")}`}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div></div></header>`;
+  `<a href="#main" class="skip">${t("home")}</a><header class="header"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" aria-label="${t("language")}">${languages.map((l) => `<option value="${l}" ${l === lang ? "selected" : ""}>${l.toUpperCase()}</option>`).join("")}</select>${me.user ? `${link("wallet", "account-shortcut")}${link("orders", "account-shortcut")}<details class="account-menu"><summary class="iconbtn" aria-label="${t("profile")}">${icon("user")}</summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "security", "wallet", "orders", "history"].map((k) => link(k)).join("")}${me.user.role === "admin" ? `<a href="/admin/">${t("admin")}</a>` : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><details class="account-menu"><summary class="iconbtn" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details>` : `${link("login", "login-link")}${link("signup", "btn small")}`}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div></div></header>`;
 document.querySelector("#nav-logout")?.addEventListener("click", async () => {
   try {
     await api("/auth/logout", { method: "POST" });
@@ -405,25 +405,7 @@ async function tokenPage() {
 }
 async function profile() {
   if (needAuth()) return;
-  standard(
-    `<div class="grid2"><section class="panel"><div class="eyebrow">OXION · ${t("profile")}</div><h2>${esc(me.user.email)}</h2><span class="badge ${me.user.verified ? "ok" : ""}">${t(me.user.verified ? "verified" : "unverified")}</span><div class="uid">${esc(me.user.uid)}<button class="iconbtn" data-copy="${esc(me.user.uid)}" aria-label="${t("copy")}">${icon("copy")}</button></div><p class="hint">${t("faq4a")}</p><div class="divider"></div><form id="profile-form"><label>${t("language")}<select name="language">${languages.map((l) => `<option ${l === lang ? "selected" : ""}>${l}</option>`).join("")}</select></label><div data-result></div><button class="btn primary">${t("save")}</button></form></section><section class="panel"><h3>${t("security")}</h3><p class="hint">${t("step2Desc")}</p>${link("security", "btn outline")}<div class="divider"></div>${!me.user.verified ? `<button class="btn outline" id="resend">${t("resend")}</button>` : ""}<p><button class="btn danger" id="logout">${t("logout")}</button></p>${me.user.role === "admin" ? `<a href="/admin/" class="text-link">${t("admin")} ${icon("arrow")}</a>` : ""}</section></div>`,
-  );
-  onForm("#profile-form", async (b) => {
-    await api("/profile", { method: "PATCH", body: b });
-    setLanguage(b.language);
-  });
-  document.querySelector("#logout").onclick = async () => {
-    await api("/auth/logout", { method: "POST" });
-    location.assign("/login.html");
-  };
-  document.querySelector("#resend")?.addEventListener("click", async () => {
-    try {
-      const r = await api("/auth/resend", { method: "POST" });
-      toast(t(r.delivery === "smtp" ? "checkEmail" : "smtpMissing"));
-    } catch (e) {
-      toast(e.message, true);
-    }
-  });
+  await (await import("./profile.js")).renderProfile(standard);
 }
 async function security() {
   if (needAuth()) return;
@@ -507,7 +489,7 @@ async function deposit() {
 async function withdraw() {
   if (needAuth()) return;
   standard(
-    `<div class="grid2"><section class="panel"><h2>${t("withdraw")}</h2>${notice(t("custodyMissing"), "warn")}<form id="withdraw-form"><label>${t("asset")}<select name="asset"><option>USDT</option></select></label><label>${t("network")}<select name="network"><option value="ETH-SEPOLIA">Ethereum Sepolia · TESTNET</option></select></label>${field("address", "address", "text", 'pattern="0x[a-fA-F0-9]{40}" autocomplete="off"')}${field("amount", "amount", "text", 'inputmode="decimal" pattern="[0-9]+([.][0-9]{1,18})?"')}${field("code", "code", "text", 'inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code"')}<div class="estimates"><div>${t("minimum")}<strong>10 USDT</strong></div><div>${t("fee")}<strong>1 USDT</strong></div><div>${t("receive")}<strong id="withdraw-net">—</strong></div><div>${t("total")}<strong id="withdraw-total">—</strong></div></div><div data-result></div><button class="btn primary">${t("request")}</button></form></section><section class="panel"><h3>${t("security")}</h3><p class="hint">${t("balanceNote")}</p><p class="hint">${t("faq4a")}</p>${link("security", "btn outline")}</section></div><section class="section"><h2>${t("history")}</h2><div class="panel" id="withdraw-history"></div></section>`,
+    `<div class="transfer-layout"><section class="transfer-sheet"><div class="profile-sheet-heading"><span>${t("withdraw")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="crypto-rail"><span>${coin("USDT")}${t("cryptoOnly")}</span></div><form id="withdraw-form"><div class="transfer-select">${coin("USDT")}<label class="hidden" for="withdraw-asset">${t("asset")}</label><select id="withdraw-asset" name="asset" aria-label="${t("asset")}"><option>USDT</option></select></div><div class="transfer-select"><label class="hidden" for="withdraw-network">${t("network")}</label><select name="network" id="withdraw-network" aria-label="${t("network")}"><option value="ETH-SEPOLIA">Ethereum Sepolia · TESTNET</option></select></div><div class="transfer-minimum"><strong>${t("minimum")} 10 USDT</strong><p>${t("withdrawUnavailable")}</p></div>${field("address", "address", "text", 'pattern="0x[a-fA-F0-9]{40}" autocomplete="off"')}${field("amount", "amount", "text", 'inputmode="decimal" pattern="[0-9]+([.][0-9]{1,18})?"')}${field("code", "code", "text", 'inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code"')}<div class="transfer-estimates"><div><span>${t("fee")}</span><strong>1 USDT</strong></div><div><span>${t("receive")}</span><strong id="withdraw-net">—</strong></div><div><span>${t("total")}</span><strong id="withdraw-total">—</strong></div></div><div data-result></div><button class="btn primary transfer-submit">${t("request")}</button></form><div class="transfer-links"><a href="/wallet.html">${t("wallet")}</a><a href="/support.html">${t("support")}</a></div></section><aside class="transfer-aside"><section class="panel"><h3>${t("security")}</h3>${notice(t("withdrawUnavailable"), "warn")}<p class="hint">${t("balanceNote")}</p><p class="hint">${t("faq4a")}</p>${link("security", "btn soft")}</section><section class="panel"><h3>${t("history")}</h3><div id="withdraw-history"></div></section></aside></div>`,
   );
   const f = document.querySelector("#withdraw-form");
   f.amount.oninput = () => {
@@ -594,29 +576,16 @@ export async function confirmDialog(content) {
 }
 async function history() {
   if (needAuth()) return;
-  const r = await api("/history");
-  standard(
-    `<div class="panel table-panel">${table(
-      [
-        t("date"),
-        t("action"),
-        t("asset"),
-        t("status"),
-        t("amount"),
-        t("before"),
-        t("after"),
-      ],
-      r.items.map(
-        (h) =>
-          `<tr><td>${date(h.created_at)}</td><td>${statusLabel(h.kind)}</td><td>${esc(h.asset)}</td><td>${t(bucketKey[h.bucket] || "status")}</td><td>${money(h.amount, 8)}</td><td>${money(h.before_balance, 8)}</td><td>${money(h.after_balance, 8)}</td></tr>`,
-      ),
-    )}</div>`,
-  );
+  await (await import("./activity.js")).renderHistory(standard, statusLabel);
 }
 async function orders(target = null) {
   if (!target && needAuth()) return;
   if (!me.user) {
     if (target) target.innerHTML = notice(t("authRequired"));
+    return;
+  }
+  if (!target) {
+    await (await import("./activity.js")).renderOrders(standard, statusLabel);
     return;
   }
   const r = await api("/orders");
@@ -678,7 +647,7 @@ async function support() {
         const key = {
           account: "step1Desc",
           google: status.google ? "googleHelp" : "googleMissing",
-          deposit: "custodyMissing",
+          deposit: "depositManualInfo",
           withdraw: "custodyMissing",
           trade: "simulationOrder",
           security: "faq4a",
