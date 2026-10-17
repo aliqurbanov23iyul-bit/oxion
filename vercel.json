@@ -5,7 +5,7 @@
   "functions": {
     "app.js": {
       "maxDuration": 60,
-      "includeFiles": "{server/views/**,public/404.html}"
+      "includeFiles": "{server/views/**,public/**}"
     }
   },
   "headers": [

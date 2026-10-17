@@ -1,5 +1,6 @@
 // Vercel's Express entry point. This module never listens on a local port.
 import express from "express";
+import { fileURLToPath } from "node:url";
 import { createApp } from "./server/app.js";
 import { database } from "./server/db.js";
 import { hostedConfig } from "./server/hosted-config.js";
@@ -10,6 +11,34 @@ export function hostedApplication(source = process.env, connect = database) {
   app.use((req, res, next) => {
     res.set("Cache-Control", "no-store");
     next();
+  });
+  // Public documents must render even before Neon/OAuth/SMTP are configured.
+  // Use sendFile explicitly: Vercel's Express adapter ignores express.static().
+  const publicRoot = fileURLToPath(new URL("./public/", import.meta.url));
+  app.use((req, res, next) => {
+    if (
+      req.path === "/api" ||
+      req.path.startsWith("/api/") ||
+      req.path === "/admin" ||
+      req.path.startsWith("/admin/")
+    )
+      return next();
+    if (!["GET", "HEAD"].includes(req.method)) return res.status(405).end();
+    const name = req.path === "/" ? "index.html" : req.path.slice(1);
+    const allowed = /^[a-z-]+\.html$/.test(name) || name.startsWith("assets/");
+    res
+      .status(allowed ? 200 : 404)
+      .sendFile(
+        allowed ? name : "404.html",
+        { root: publicRoot, dotfiles: "deny" },
+        (error) => {
+          if (error && !res.headersSent)
+            res
+              .status(error.statusCode === 404 ? 404 : 500)
+              .type("text")
+              .send("Page unavailable");
+        },
+      );
   });
   let ready;
   app.use(async (req, res, next) => {

@@ -46,6 +46,24 @@ test("unconfigured Vercel runtime fails closed without connecting or revealing s
       calls++;
     }),
     async (base) => {
+      for (const path of [
+        "/",
+        "/index.html",
+        "/signup.html",
+        "/assets/app.js",
+        "/assets/styles.css",
+        "/assets/oxion-logo.png",
+      ]) {
+        const publicResponse = await fetch(base + path);
+        assert.equal(publicResponse.status, 200, path);
+        if (path.endsWith(".html") || path === "/")
+          assert.match(await publicResponse.text(), /id="main"/);
+        else await publicResponse.arrayBuffer();
+      }
+      assert.equal(
+        (await fetch(base + "/server/views/admin.html")).status,
+        404,
+      );
       const response = await fetch(base + "/api/me");
       assert.equal(response.status, 503);
       assert.deepEqual(await response.json(), {
