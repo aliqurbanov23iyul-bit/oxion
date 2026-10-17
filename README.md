@@ -19,7 +19,7 @@ npm.cmd start
 
 ### Qeydiyyatı yerli tamamlamaq
 
-1. `signup.html`-də hesab yaradın. Şifrə 12–128 simvol olmalıdır.
+1. `signup.html`-də hesab yaradın. Şifrə 8–128 simvol olmalıdır.
 2. SMTP qoşulmayıbsa məktub həqiqətən göndərilmir. `.local/mail` içində ən yeni HTML faylını açıb **“Hesabınızı təsdiqləyin”** düyməsini basın.
 3. Link 30 dəqiqə ərzində bir dəfə işləyir. Sonra `login.html`-dən daxil olun.
 4. `security.html`-də TOTP qurun. Profil səhifəsində UID və kopyalama düyməsi var.

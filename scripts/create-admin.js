@@ -12,7 +12,7 @@ console.log(
 const email = (await rl.question("Admin email: ")).trim().toLowerCase();
 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw Error("Invalid email");
 const password = await passwordHash(
-  await rl.secret("Password (12+ characters): "),
+  await rl.secret("Password (8+ characters): "),
 );
 const secret = new OTPAuth.Secret({ size: 20 });
 console.log("Add this secret to your Authenticator: " + secret.base32);

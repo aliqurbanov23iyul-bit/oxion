@@ -28,7 +28,7 @@ export const amount = (v) => {
   return new D(v);
 };
 export async function passwordHash(p) {
-  if (typeof p !== "string" || p.length < 12 || p.length > 128)
+  if (typeof p !== "string" || p.length < 8 || p.length > 128)
     fail(400, "PASSWORD_LENGTH");
   const salt = token();
   const result = await promisify(scryptCb)(p, salt, 64, {

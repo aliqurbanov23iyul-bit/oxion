@@ -335,10 +335,10 @@ const data = {
   email: ["E-poçt", "Email", "E-posta", "Эл. почта"],
   password: ["Şifrə", "Password", "Şifre", "Пароль"],
   passwordHint: [
-    "Ən azı 12 simvol. Unikal şifrə seçin.",
-    "At least 12 characters. Use a unique password.",
-    "En az 12 karakter. Benzersiz bir şifre seçin.",
-    "Не менее 12 символов. Используйте уникальный пароль.",
+    "Ən azı 8 simvol. Unikal şifrə seçin.",
+    "At least 8 characters. Use a unique password.",
+    "En az 8 karakter. Benzersiz bir şifre seçin.",
+    "Не менее 8 символов. Используйте уникальный пароль.",
   ],
   code: [
     "Doğrulama kodu",
@@ -773,10 +773,10 @@ const data = {
     "Требуются права администратора и TOTP.",
   ],
   passwordLength: [
-    "Şifrə 12–128 simvol olmalıdır.",
-    "Password must be 12–128 characters.",
-    "Şifre 12–128 karakter olmalı.",
-    "Пароль должен содержать 12–128 символов.",
+    "Şifrə 8–128 simvol olmalıdır.",
+    "Password must be 8–128 characters.",
+    "Şifre 8–128 karakter olmalı.",
+    "Пароль должен содержать 8–128 символов.",
   ],
   invalidForm: [
     "Formadakı məlumatları yoxlayın.",
