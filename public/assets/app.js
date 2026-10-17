@@ -466,20 +466,11 @@ const bucketKey = {
 async function wallet() {
   if (needAuth()) return;
   const r = await api("/wallet");
-  const sum = (b) =>
-    b === "total"
-      ? r.totals?.find((x) => x.asset === "USDT")?.balance || "0"
-      : r.items
-          .filter((a) => a.asset === "USDT" && a.bucket === b)
-          .map((a) => a.balance)[0] || "0";
+  const balance =
+    r.items.find((a) => a.asset === "USDT" && a.bucket === "available")
+      ?.balance || "0";
   standard(
-    `${notice(t("balanceNote"))}<div class="wallet-overview">${["total", "available", "locked", "bonus"].map((b) => `<section class="panel"><span class="hint">${t(b)}</span><div class="metric">${money(sum(b))} <small>USDT</small></div>${b === "available" ? `${link("deposit", "btn small primary")} ${link("withdraw", "btn small outline")}` : `<span class="badge">${t("accountOverview")}</span>`}</section>`).join("")}</div><section class="panel table-panel" style="margin-top:24px">${table(
-      [t("asset"), t("status"), t("amount")],
-      r.items.map(
-        (a) =>
-          `<tr><td><div class="coin-name">${coin(a.asset)}${esc(a.asset)}</div></td><td>${t(bucketKey[a.bucket] || a.bucket)}</td><td>${money(a.balance, 8)}</td></tr>`,
-      ),
-    )}</section><div class="form-inline" style="margin-top:22px">${["history", "orders", "deposit", "withdraw"].map((k) => link(k, "btn outline")).join("")}</div>`,
+    `<section class="wallet-sheet"><div class="profile-sheet-heading"><span>${t("wallet")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="wallet-single-balance"><div class="wallet-emblem">${icon("wallet")}</div><span class="wallet-balance-label">${t("available")}</span><div class="wallet-single-amount"><strong>${money(balance)}</strong><span>USDT</span></div></div><div class="wallet-single-actions"><a class="btn" href="/deposit.html">${icon("deposit")}${t("deposit")}</a><a class="btn soft" href="/withdraw.html">${icon("withdraw")}${t("withdraw")}</a></div></section>`,
   );
 }
 async function deposit() {
