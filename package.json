@@ -1,0 +1,42 @@
+{
+  "name": "oxion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "check": "node scripts/check.js",
+    "admin": "node scripts/create-admin.js",
+    "fund:test": "node scripts/fund-test.js",
+    "worker:testnet": "node scripts/testnet-worker.js",
+    "check:custody": "node scripts/check-custody.js",
+    "smoke": "node scripts/smoke.js",
+    "db:migrate": "node scripts/migrate.js",
+    "check:hosting": "node scripts/check-hosting.js",
+    "build": "npm run check",
+    "key:generate": "node -e \"console.log(require('node:crypto').randomBytes(32).toString('hex'))\"",
+    "db:cleanup": "node scripts/cleanup.js"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "cookie-parser": "^1.4.7",
+    "decimal.js": "^10.6.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "google-auth-library": "^10.3.0",
+    "helmet": "^8.1.0",
+    "nodemailer": "^10.1.2",
+    "otpauth": "^9.4.1",
+    "pg": "^8.16.3",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  }
+}
