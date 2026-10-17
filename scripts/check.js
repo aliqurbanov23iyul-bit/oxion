@@ -32,13 +32,19 @@ for (const page of pages) {
   assert.match(html, /type="module"/);
   assert.match(html, /id="main"/);
 }
-const env = await readFile(".env.example", "utf8");
-assert.ok(
-  env
-    .trim()
-    .split(/\r?\n/)
-    .every((line) => /^\w+=$/.test(line)),
-);
+let templateChecked = false;
+try {
+  const env = await readFile(".env.example", "utf8");
+  assert.ok(
+    env.trim().split(/\r?\n/).every((line) => /^\w+=$/.test(line)),
+    "Environment template must contain only empty values",
+  );
+  templateChecked = true;
+} catch (error) {
+  // This local setup template is not a runtime dependency. Vercel may omit
+  // dotfiles from the uploaded source; its secrets come from project settings.
+  if (error.code !== "ENOENT" || process.env.VERCEL !== "1") throw error;
+}
 console.log(
-  `Checked ${count} JavaScript files, ${pages.length + 1} HTML pages and blank environment template.`,
+  `Checked ${count} JavaScript files and ${pages.length + 1} HTML pages. ${templateChecked ? "Blank environment template checked." : "Vercel: local environment template absent; project environment variables are used."}`,
 );
