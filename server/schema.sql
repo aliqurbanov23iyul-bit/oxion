@@ -74,3 +74,24 @@ CREATE TABLE IF NOT EXISTS request_limits (key TEXT PRIMARY KEY,hits INTEGER NOT
 CREATE INDEX IF NOT EXISTS request_limits_expiry ON request_limits(reset_at);
 CREATE TABLE IF NOT EXISTS oxion_schema (version TEXT PRIMARY KEY,applied_at TIMESTAMPTZ NOT NULL DEFAULT now());
 INSERT INTO oxion_schema(version) VALUES('2026-10-vercel-1') ON CONFLICT DO NOTHING;
+CREATE TABLE IF NOT EXISTS deposit_methods (
+ id TEXT PRIMARY KEY, asset TEXT NOT NULL, network TEXT NOT NULL, address TEXT NOT NULL,
+ memo TEXT NOT NULL DEFAULT '', minimum NUMERIC(38,18) NOT NULL CHECK(minimum>0),
+ confirmations INTEGER NOT NULL CHECK(confirmations>0), active BOOLEAN NOT NULL DEFAULT FALSE,
+ actor TEXT NOT NULL REFERENCES users(id), created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS deposit_requests (
+ id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), method_id TEXT NOT NULL REFERENCES deposit_methods(id),
+ asset TEXT NOT NULL, network TEXT NOT NULL, address TEXT NOT NULL, memo TEXT NOT NULL,
+ amount NUMERIC(38,18) NOT NULL CHECK(amount>0), txid TEXT NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(network,txid)
+);
+CREATE TABLE IF NOT EXISTS deposit_reviews (
+ request_id TEXT PRIMARY KEY REFERENCES deposit_requests(id), actor TEXT NOT NULL REFERENCES users(id),
+ approved BOOLEAN NOT NULL, reason TEXT NOT NULL, journal_id TEXT REFERENCES journals(id),
+ created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+DROP TRIGGER IF EXISTS protect_deposit_requests ON deposit_requests;
+CREATE TRIGGER protect_deposit_requests BEFORE UPDATE OR DELETE ON deposit_requests FOR EACH ROW EXECUTE FUNCTION immutable_finance();
+DROP TRIGGER IF EXISTS protect_deposit_reviews ON deposit_reviews;
+CREATE TRIGGER protect_deposit_reviews BEFORE UPDATE OR DELETE ON deposit_reviews FOR EACH ROW EXECUTE FUNCTION immutable_finance();

@@ -1,3 +1,4 @@
+import { saveMethod, submitDeposit, reviewDeposit } from "./manual-deposits.js";
 import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -611,6 +612,46 @@ export function createApp(db, env = process.env, services = {}) {
   app.post("/api/deposit/address", auth, verified, (req, res) =>
     res.json(depositAddress()),
   );
+  app.get("/api/deposit/methods/:id/qr", auth, async (req, res) => {
+    const m = (
+      await db.query(
+        "SELECT address FROM deposit_methods WHERE id=$1 AND active=TRUE",
+        [req.params.id],
+      )
+    ).rows[0];
+    if (!m) fail(404, "NOT_FOUND");
+    res
+      .type("svg")
+      .send(
+        await QRCode.toString(m.address, {
+          type: "svg",
+          margin: 2,
+          width: 200,
+        }),
+      );
+  });
+  app.get("/api/deposit/methods", auth, async (req, res) =>
+    res.json({
+      items: (
+        await db.query(
+          "SELECT id,asset,network,address,memo,minimum,confirmations FROM deposit_methods WHERE active=TRUE ORDER BY created_at",
+        )
+      ).rows,
+    }),
+  );
+  app.post("/api/deposit/requests", auth, verified, async (req, res) =>
+    res.status(201).json(await submitDeposit(db, req.auth.user_id, req.body)),
+  );
+  app.get("/api/deposit/requests", auth, async (req, res) =>
+    res.json({
+      items: (
+        await db.query(
+          "SELECT d.*,CASE WHEN r.approved=TRUE THEN 'confirmed' WHEN r.approved=FALSE THEN 'rejected' ELSE 'awaiting_review' END AS status,r.reason FROM deposit_requests d LEFT JOIN deposit_reviews r ON r.request_id=d.id WHERE d.user_id=$1 ORDER BY d.created_at DESC LIMIT 100",
+          [req.auth.user_id],
+        )
+      ).rows,
+    }),
+  );
   app.get("/api/withdrawals", auth, async (req, res) =>
     res.json({
       items: (
@@ -736,6 +777,39 @@ export function createApp(db, env = process.env, services = {}) {
     res.status(201).json({ id: ticketId, status: "open" });
   });
   app.use("/api/admin", auth, admin);
+  app.get("/api/admin/deposit-methods", async (req, res) =>
+    res.json({
+      items: (
+        await db.query("SELECT * FROM deposit_methods ORDER BY created_at DESC")
+      ).rows,
+    }),
+  );
+  app.post("/api/admin/deposit-methods", async (req, res) =>
+    res.status(201).json(await saveMethod(db, req.auth.user_id, req.body)),
+  );
+  app.patch("/api/admin/deposit-methods/:id", async (req, res) => {
+    if (typeof req.body.active !== "boolean") fail(400, "INVALID_FORM");
+    const r = await db.query(
+      "UPDATE deposit_methods SET active=$1 WHERE id=$2 RETURNING id",
+      [req.body.active, req.params.id],
+    );
+    if (!r.rows.length) fail(404, "NOT_FOUND");
+    res.json(r.rows[0]);
+  });
+  app.get("/api/admin/deposit-requests", async (req, res) =>
+    res.json({
+      items: (
+        await db.query(
+          "SELECT d.*,u.uid,u.email,CASE WHEN r.approved=TRUE THEN 'confirmed' WHEN r.approved=FALSE THEN 'rejected' ELSE 'awaiting_review' END AS status FROM deposit_requests d JOIN users u ON u.id=d.user_id LEFT JOIN deposit_reviews r ON r.request_id=d.id ORDER BY d.created_at DESC LIMIT 100",
+        )
+      ).rows,
+    }),
+  );
+  app.post("/api/admin/deposit-requests/:id/review", async (req, res) =>
+    res.json(
+      await reviewDeposit(db, req.auth.user_id, req.params.id, req.body),
+    ),
+  );
   app.get("/api/admin/testnet", async (req, res) =>
     res.json({
       configured: !!testnet,

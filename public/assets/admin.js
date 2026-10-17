@@ -109,13 +109,7 @@ export async function renderAdmin({ standard, date }) {
         });
         break;
       case "deposit":
-        target.innerHTML = `<div class="panel"><h2>${t("deposit")}</h2>${table(
-          [t("user"), t("asset"), t("amount"), t("txid"), t("status")],
-          overview.deposits.map(
-            (d) =>
-              `<tr><td>${esc(d.user_id)}</td><td>${esc(d.asset)}</td><td>${money(d.amount, 8)}</td><td>${esc(d.txid)}</td><td>${esc(d.status)}</td></tr>`,
-          ),
-        )}</div>`;
+        await (await import("./deposits.js")).renderDepositAdmin(target);
         break;
       case "withdraw":
         target.innerHTML = `<div class="panel"><h2>${t("withdraw")}</h2>${notice(t("custodyMissing"), "warn")}${table(

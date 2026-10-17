@@ -1132,6 +1132,8 @@ export function errorText(code) {
     PASSWORD_LENGTH: "passwordLength",
     INVALID_EMAIL: "invalidForm",
     INVALID_FORM: "invalidForm",
+    INVALID_TXID: "invalidForm",
+    UNVERIFIED_DEPOSIT: "invalidForm",
     REASON_REQUIRED: "invalidForm",
     ALREADY_EXISTS: "alreadyExists",
     ADMIN_2FA_REQUIRED: "adminDenied",

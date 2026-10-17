@@ -502,20 +502,7 @@ async function wallet() {
 }
 async function deposit() {
   if (needAuth()) return;
-  standard(
-    `<div class="grid2"><div class="panel"><h2>${t("deposit")}</h2>${notice(t("custodyMissing"), "warn")}<form id="deposit-form"><label>${t("asset")}<select name="asset"><option>USDT</option></select></label><label>${t("network")}<select name="network"><option value="ETH-SEPOLIA">Ethereum Sepolia · TESTNET</option></select></label><div class="estimates"><div>${t("minimum")}<strong>10 USDT</strong></div><div>${t("confirmations")}<strong>12</strong></div><div>${t("memo")}<strong>—</strong></div></div><div data-result></div><button class="btn primary">${t("getAddress")}</button></form></div><div class="panel"><h3>${t("address")} / QR</h3><div class="empty"><div class="empty-icon">▦</div>${t("custodyMissing")}</div></div></div><section class="section"><h2>${t("history")}</h2><div class="panel" id="deposit-history"></div></section>`,
-  );
-  onForm("#deposit-form", (b) =>
-    api("/deposit/address", { method: "POST", body: b }),
-  );
-  const r = await api("/deposits");
-  document.querySelector("#deposit-history").innerHTML = table(
-    [t("date"), t("asset"), t("amount"), t("status"), t("txid")],
-    r.items.map(
-      (d) =>
-        `<tr><td>${date(d.created_at)}</td><td>${esc(d.asset)}</td><td>${money(d.amount, 8)}</td><td>${esc(d.status)}</td><td>${esc(d.txid)}</td></tr>`,
-    ),
-  );
+  await (await import("./deposits.js")).renderDeposits(standard);
 }
 async function withdraw() {
   if (needAuth()) return;
@@ -571,6 +558,7 @@ export function statusLabel(s) {
     answered: "reply",
     manual_adjustment: "adjustment",
     crypto_deposit: "deposit",
+    admin_confirmed_deposit: "deposit",
     simulation_fill: "simulate",
     order_reserve: "locked",
     withdrawal_reserve: "locked",
