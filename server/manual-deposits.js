@@ -203,26 +203,29 @@ export async function reviewDeposit(db, admin, request, b) {
     }
     if (b.approve && b.verified !== true) fail(400, "UNVERIFIED_DEPOSIT");
     let journal = null;
-    const txid = b.approve
-      ? normalizeDepositTxid(r.network, b.txid || r.txid)
-      : null;
+    const txid =
+      b.approve && (b.txid || r.txid)
+        ? normalizeDepositTxid(r.network, b.txid || r.txid)
+        : null;
     if (b.approve) {
       await lockUser(tx, r.user_id);
-      const duplicate = await tx.query(
-        "SELECT d.id FROM deposit_requests d JOIN deposit_reviews v ON v.request_id=d.id WHERE v.approved=TRUE AND d.network=$1 AND d.id<>$2 AND (CASE WHEN d.network='SOL' THEN coalesce(v.txid,d.txid) ELSE regexp_replace(lower(coalesce(v.txid,d.txid)),'^0x','') END)=$3",
-        [r.network, r.id, txid],
-      );
-      const custody = await tx.query(
-        "SELECT id FROM deposits WHERE network=$1 AND status='confirmed' AND (CASE WHEN network='SOL' THEN txid ELSE regexp_replace(lower(txid),'^0x','') END)=$2",
-        [r.network, txid],
-      );
-      if (duplicate.rows.length || custody.rows.length)
-        fail(409, "IDEMPOTENCY_CONFLICT");
+      if (txid) {
+        const duplicate = await tx.query(
+          "SELECT d.id FROM deposit_requests d JOIN deposit_reviews v ON v.request_id=d.id WHERE v.approved=TRUE AND d.network=$1 AND d.id<>$2 AND (CASE WHEN d.network='SOL' THEN coalesce(v.txid,d.txid) ELSE regexp_replace(lower(coalesce(v.txid,d.txid)),'^0x','') END)=$3",
+          [r.network, r.id, txid],
+        );
+        const custody = await tx.query(
+          "SELECT id FROM deposits WHERE network=$1 AND status='confirmed' AND (CASE WHEN network='SOL' THEN txid ELSE regexp_replace(lower(txid),'^0x','') END)=$2",
+          [r.network, txid],
+        );
+        if (duplicate.rows.length || custody.rows.length)
+          fail(409, "IDEMPOTENCY_CONFLICT");
+      }
       const a = await account(tx, r.user_id, r.asset, "available"),
         c = await account(tx, null, r.asset, "custody");
       journal = await post(tx, {
         reference: "manual-deposit:" + r.id,
-        kind: "admin_confirmed_deposit",
+        kind: txid ? "admin_confirmed_deposit" : "admin_attested_deposit",
         actor: admin,
         reason: b.reason,
         lines: [

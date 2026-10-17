@@ -29,3 +29,12 @@ Depozit və çıxarış ekranları kripto seçimi, aktiv/şəbəkə formaları v
 Son versiyada müştəri yalnız məbləği bildirir. Brauzer avtomatik sorğu açarı göndərir; eyni sorğunun təkrarı yeni qeyd yaratmır. Sorğu gözləmədədir və balans artmır. Təsdiqləyən admin blokçeyndə köçürməni, məbləği, qəbul ünvanını və istifadəçiyə aid olduğunu yoxlayıb TXID-ni admin formasında daxil edir. Rədd zamanı TXID tələb olunmur. Təsdiqlənmiş TXID şəbəkə üzrə unikal saxlanır; paralel təsdiqlərdən yalnız biri hesaba yazılır. İlkin sorğu dəyişdirilmir, adminin TXID-si ayrıca dəyişməz qərar qeydində saxlanır.
 
 Mövcud baza üçün docs/deposit-no-txid.sql faylını Neon SQL Editor-də Run edin. Yeni quraşdırmada docs/manual-deposits.sql bütün tələb olunan əlavələri ehtiva edir. Əvvəlki sənəddə müştəridən TXID göndərilməsi barədə olan addım bu dəyişikliklə əvəz olunur.
+
+
+## Admin sorğu mərkəzi
+
+/admin/ → Sorğular bölməsində Depozit sorğuları və Çıxarış sorğuları ayrıca tablarda görünür. Gözləyən filtrini söndürərək baxılmış sorğulara baxmaq, UID/e-poçt üzrə axtarmaq və Yenilə düyməsindən istifadə etmək olar. Bölmə açıq olanda 30 saniyəlik yenilənmə var; admin formaya yazmağa başlayıbsa həmin mətn avtomatik yenilənmə ilə silinmir. Ünvanların idarəsi Depozit ünvanları bölməsində ayrıca qalır.
+
+Admin interfeysində də TXID tələb olunmur. Depozitin təsdiqi üçün ödənişi və istifadəçiyə aidliyini yoxladığını bildirən seçim və səbəb məcburidir. TXID-siz təsdiq admin_attested_deposit jurnal növündə admin, vaxt və səbəblə saxlanır; bu, avtomatik blokçeyn təsdiqi deyil. Eyni sorğunun təkrar və paralel təsdiqi yalnız bir jurnal yaradır. TXID olmadığından eyni blokçeyn köçürməsinin müxtəlif sorğularda istifadə edilməsini avtomatik tanımaq mümkün deyil; administrator bunu öz yoxlamasında ayırmalıdır. Əvvəlki TXID-li təsdiqlərin mövcud unikal yoxlaması API uyğunluğu üçün saxlanır.
+
+Çıxarış tabında sorğular göstərilir və rədd edilmiş sorğunun rezervi geri qaytarıla bilər. Bu bölmə kripto göndərmə xidmətini aktivləşdirmir və çıxarışı tamamlandı kimi işarələmir. Bu dəyişiklik üçün yeni baza miqrasiyası yoxdur; əvvəlki manual-deposits.sql əlavələri tətbiq edilmiş olmalıdır.

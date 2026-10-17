@@ -569,6 +569,7 @@ export function statusLabel(s) {
     manual_adjustment: "adjustment",
     crypto_deposit: "deposit",
     admin_confirmed_deposit: "deposit",
+    admin_attested_deposit: "manualDeposit",
     simulation_fill: "simulate",
     order_reserve: "locked",
     withdrawal_reserve: "locked",

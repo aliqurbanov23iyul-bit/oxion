@@ -37,10 +37,10 @@ test("customer can report without TXID; admin supplies TXID; duplicate approvals
     await assert.rejects(
       reviewDeposit(db, "a", r.id, {
         approve: true,
-        verified: true,
+        verified: false,
         reason: "checked on blockchain",
       }),
-      (e) => e.code === "INVALID_TXID",
+      (e) => e.code === "UNVERIFIED_DEPOSIT",
     );
     const second = await submitDeposit(db, "v", {
       ...body,
@@ -95,6 +95,69 @@ test("customer can report without TXID; admin supplies TXID; duplicate approvals
         ])
       ).rows[0].txid,
       "a".repeat(64),
+    );
+  } finally {
+    await db.close();
+  }
+});
+
+test("admin can attest a deposit without TXID; retries post one immutable audited journal", async () => {
+  const db = await database(null, "memory://");
+  try {
+    await db.query(
+      "INSERT INTO users(id,uid,email) VALUES('a','OX-11113333','admin@test.invalid'),('u','OX-22224444','user@test.invalid')",
+    );
+    const m = await saveMethod(db, "a", {
+      asset: "USDT",
+      network: "BEP20",
+      address: "0x" + "1".repeat(40),
+      confirmations: 15,
+      active: true,
+    });
+    const r = await submitDeposit(db, "u", {
+      method: m.id,
+      amount: "10",
+      request_key: "no-txid-customer",
+    });
+    await assert.rejects(
+      reviewDeposit(db, "a", r.id, {
+        approve: true,
+        verified: true,
+        reason: "short",
+      }),
+      (e) => e.code === "REASON_REQUIRED",
+    );
+    const b = {
+      approve: true,
+      verified: true,
+      reason: "Checked received payment and customer ownership",
+    };
+    const result = await Promise.all([
+      reviewDeposit(db, "a", r.id, b),
+      reviewDeposit(db, "a", r.id, b),
+    ]);
+    assert.equal(result[0].txid, null);
+    assert.equal(result[0].journal_id, result[1].journal_id);
+    assert.equal(
+      (
+        await db.query(
+          "SELECT balance FROM accounts WHERE id='u:USDT:available'",
+        )
+      ).rows[0].balance,
+      "10.000000000000000000",
+    );
+    const j = (
+      await db.query(
+        "SELECT * FROM journals WHERE kind='admin_attested_deposit'",
+      )
+    ).rows;
+    assert.equal(j.length, 1);
+    assert.equal(j[0].actor, "a");
+    assert.equal(j[0].reason, b.reason);
+    await assert.rejects(db.query("DELETE FROM deposit_reviews"));
+    await assert.rejects(
+      reviewDeposit(db, "a", r.id, { ...b, approve: false }),
+      (e) => e.code === "IDEMPOTENCY_CONFLICT",
     );
   } finally {
     await db.close();

@@ -1,5 +1,52 @@
 export const languages = ["az", "en", "tr", "ru"];
 const data = {
+  requests: ["Sorğular", "Requests", "Talepler", "Заявки"],
+  depositMethods: [
+    "Depozit ünvanları",
+    "Deposit addresses",
+    "Yatırma adresleri",
+    "Адреса депозитов",
+  ],
+  manualDeposit: [
+    "Admin təsdiqli depozit",
+    "Administrator-approved deposit",
+    "Yönetici onaylı yatırma",
+    "Депозит, подтверждённый администратором",
+  ],
+  requestsWaiting: ["Gözləyən", "Pending", "Bekleyen", "Ожидающие"],
+  requestsAll: ["Bütün sorğular", "All requests", "Tüm talepler", "Все заявки"],
+  requestsDeposits: [
+    "Depozit sorğuları",
+    "Deposit requests",
+    "Yatırma talepleri",
+    "Заявки на депозит",
+  ],
+  requestsWithdrawals: [
+    "Çıxarış sorğuları",
+    "Withdrawal requests",
+    "Çekim talepleri",
+    "Заявки на вывод",
+  ],
+  requestsRefresh: ["Yenilə", "Refresh", "Yenile", "Обновить"],
+  requestsSearch: [
+    "UID və ya e-poçt ilə axtar",
+    "Search UID or email",
+    "UID veya e-posta ara",
+    "Поиск UID или почты",
+  ],
+  requestsCheck: [
+    "Ödənişi, məbləği, şəbəkəni, ünvanı və istifadəçiyə aid olduğunu yoxladım.",
+    "I checked the payment, amount, network, address and ownership.",
+    "Ödemeyi, tutarı, ağı, adresi ve kullanıcıya ait olduğunu kontrol ettim.",
+    "Я проверил платёж, сумму, сеть, адрес и принадлежность пользователю.",
+  ],
+  requestsManualHint: [
+    "Təsdiq admin yoxlaması əsasında qeydə alınır.",
+    "Approval is recorded based on administrator review.",
+    "Onay yönetici kontrolüne dayanarak kaydedilir.",
+    "Подтверждение записывается на основании проверки администратора.",
+  ],
+
   txidInvalid: [
     "Təsdiq üçün düzgün TXID daxil edin.",
     "Enter a valid TXID to approve the deposit.",

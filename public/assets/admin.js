@@ -19,7 +19,7 @@ export async function renderAdmin({ standard, date }) {
     return;
   }
   standard(
-    `<div class="admin-layout"><aside class="panel admin-nav">${["user", "deposit", "withdraw", "orders", "tickets", "promotions", "audit"].map((k, i) => `<button data-section="${k}" class="${i === 0 ? "active" : ""}">${t(k)}</button>`).join("")}<details><summary>${t("advancedTools")}</summary><button data-section="testnet">Binance Testnet</button></details></aside><div class="stack" id="admin-body"></div></div>`,
+    `<div class="admin-layout"><aside class="panel admin-nav">${["user", "requests", "deposit", "orders", "tickets", "promotions", "audit"].map((k, i) => `<button data-section="${k}" class="${i === 0 ? "active" : ""}">${t(k === "deposit" ? "depositMethods" : k)}</button>`).join("")}<details><summary>${t("advancedTools")}</summary><button data-section="testnet">Binance Testnet</button></details></aside><div class="stack" id="admin-body"></div></div>`,
   );
   const overview = await api("/admin/overview");
   let section = "user";
@@ -111,29 +111,8 @@ export async function renderAdmin({ standard, date }) {
       case "deposit":
         await (await import("./deposits.js")).renderDepositAdmin(target);
         break;
-      case "withdraw":
-        target.innerHTML = `<div class="panel"><h2>${t("withdraw")}</h2>${notice(t("custodyMissing"), "warn")}${table(
-          [t("user"), t("amount"), t("address"), t("status"), t("action")],
-          overview.withdrawals.map(
-            (w) =>
-              `<tr><td>${esc(w.user_id)}</td><td>${money(w.amount, 8)} ${esc(w.asset)}</td><td>${esc(w.address)}</td><td>${esc(w.status)}</td><td>${w.status === "awaiting_review" ? `<button class="btn small danger" data-reject="${esc(w.id)}">${t("reject")}</button>` : "—"}</td></tr>`,
-          ),
-        )}</div>`;
-        document.querySelectorAll("[data-reject]").forEach(
-          (b) =>
-            (b.onclick = async () => {
-              try {
-                await api(
-                  "/admin/withdrawals/" + b.dataset.reject + "/review",
-                  { method: "POST", body: { approve: false } },
-                );
-                toast(t("saved"));
-                await renderAdmin({ standard, date });
-              } catch (e) {
-                toast(e.message, true);
-              }
-            }),
-        );
+      case "requests":
+        await (await import("./admin-requests.js")).renderRequests(target);
         break;
       case "orders":
         target.innerHTML = `<section class="panel"><h2>${t("orders")}</h2>${notice(t("simulationOrder"), "warn")}${table(

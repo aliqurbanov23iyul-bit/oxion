@@ -845,6 +845,15 @@ export function createApp(db, env = process.env, services = {}) {
     if (!r.rows.length) fail(404, "NOT_FOUND");
     res.json(r.rows[0]);
   });
+  app.get("/api/admin/withdrawal-requests", async (req, res) =>
+    res.json({
+      items: (
+        await db.query(
+          "SELECT w.*,u.uid,u.email FROM withdrawals w JOIN users u ON u.id=w.user_id ORDER BY CASE WHEN w.status='awaiting_review' THEN 0 ELSE 1 END,w.created_at DESC LIMIT 200",
+        )
+      ).rows,
+    }),
+  );
   app.get("/api/admin/deposit-requests", async (req, res) =>
     res.json({
       items: (

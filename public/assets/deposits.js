@@ -183,17 +183,14 @@ export async function renderDeposits(standard) {
   });
 }
 export async function renderDepositAdmin(target) {
-  const [methods, requests] = await Promise.all([
-    api("/admin/deposit-methods"),
-    api("/admin/deposit-requests"),
-  ]);
+  const methods = await api("/admin/deposit-methods");
   target.innerHTML = `<section class="panel"><h2>${l(1)}</h2>${notice(l(13))}<h3>${l(0)}</h3>${cards(depositCatalog, depositCatalog[0].id, "data-preset")}<form id="method-form"><p id="selected-preset">USDT · BEP20 · BNB Smart Chain</p><input type="hidden" name="asset" value="USDT"><input type="hidden" name="network" value="BEP20">${input("address", t("address"), 'maxlength="150"')}<label>${t("memo")}<input name="memo" maxlength="120" inputmode="numeric"></label><p><strong>${l(14)}</strong></p><label>${l(15)}<input type="file" id="qr-upload" accept="image/png,image/jpeg"></label><p class="hint">${l(16)}</p><img id="qr-preview" width="160" height="160" alt="QR" hidden>${input("confirmations", t("confirmations"), 'type="number" min="1" max="10000" value="15"')}<label><input type="checkbox" name="active"> ${l(2)}</label><div data-result></div><button class="btn primary">${t("save")}</button></form></section><section class="panel">${table(
     [t("asset"), t("network"), t("address"), t("action")],
     methods.items.map(
       (m) =>
         `<tr><td><span class="coin-name">${assetLogo(m.asset)} ${esc(m.asset)}</span></td><td>${esc(m.network)}</td><td style="overflow-wrap:anywhere">${esc(m.address)}</td><td><button class="btn small outline" data-toggle="${esc(m.id)}">${m.active ? l(3) : l(2)}</button></td></tr>`,
     ),
-  )}</section><section class="panel"><h2>${t("deposit")}</h2>${requests.items.map((r) => `<article class="panel"><p>${esc(r.uid)} · ${esc(r.email)}</p><p>${esc(r.amount)} ${esc(r.asset)} · ${esc(r.network)}</p><p style="overflow-wrap:anywhere">${t("address")}: ${esc(r.address)}<br>TXID: ${esc(r.txid)}</p><p>${esc(status(r.status))}</p>${r.status === "awaiting_review" ? `<form data-review="${esc(r.id)}"><label>TXID<input name="txid" maxlength="90" value="${esc(r.txid || "")}"></label>${input("reason", l(8), 'minlength="8" maxlength="500"')}<label><input type="checkbox" name="verified"> ${l(9)}</label><label>${t("action")}<select name="decision"><option value="reject">${l(11)}</option><option value="approve">${l(10)}</option></select></label><div data-result></div><button class="btn primary">${t("save")}</button></form>` : ""}</article>`).join("") || notice(t("empty"))}</section>`;
+  )}</section>`;
   const form = target.querySelector("#method-form");
   let image = null,
     reading = false;
@@ -269,22 +266,4 @@ export async function renderDepositAdmin(target) {
         }
       }),
   );
-  target.querySelectorAll("[data-review]").forEach((f, i) => {
-    f.id = "review-" + i;
-    f.elements.decision.onchange = () => {
-      f.elements.txid.required = f.elements.decision.value === "approve";
-    };
-    onForm("#" + f.id, async (b) => {
-      await api("/admin/deposit-requests/" + f.dataset.review + "/review", {
-        method: "POST",
-        body: {
-          approve: b.decision === "approve",
-          txid: b.txid,
-          verified: f.elements.verified.checked,
-          reason: b.reason,
-        },
-      });
-      await renderDepositAdmin(target);
-    });
-  });
 }

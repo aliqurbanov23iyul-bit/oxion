@@ -98,7 +98,7 @@ test("account API saves names, protects deposit admin routes, serves uploaded an
           decision,
         )
       ).status,
-      400,
+      200,
     );
     assert.equal(
       (
@@ -111,7 +111,9 @@ test("account API saves names, protects deposit admin routes, serves uploaded an
     );
     const history = await (await call("/deposit/requests")).json();
     assert.equal(history.items[0].status, "confirmed");
-    assert.equal(history.items[0].txid, "c".repeat(64));
+    assert.equal(history.items[0].txid, null);
+    assert.equal((await call("/admin/withdrawal-requests")).status, 403);
+    assert.equal((await call("/admin/withdrawal-requests", "a")).status, 200);
     const saved = await call(
       "/profile",
       "u",

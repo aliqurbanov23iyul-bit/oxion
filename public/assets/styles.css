@@ -3783,3 +3783,169 @@ body[data-page="wallet"] .page-content {
 .trade-quantity-label #quantity-asset {
   margin: 0;
 }
+.request-inbox-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.request-inbox-heading h2 {
+  margin: 0;
+}
+.request-filters {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 20px 0;
+}
+.request-filters > input {
+  flex: 1;
+  min-width: 0;
+}
+.request-filters > label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-size: 12px;
+  margin: 0;
+}
+.request-inbox .soft-tabs button {
+  white-space: normal;
+  line-height: 1.5;
+}
+.request-inbox .soft-tabs span,
+.request-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  padding: 2px 5px;
+  border-radius: 8px;
+  background: #dfefed;
+  color: #11746e;
+  font-size: 10px;
+  margin-left: 4px;
+}
+.request-card {
+  border: 1px solid #e4eaf1;
+  background: white;
+  border-radius: 22px;
+  padding: 22px;
+  margin: 16px 0;
+}
+.request-card-heading {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.request-card-heading > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  flex: 1;
+}
+.request-card-heading strong {
+  font-size: 13px;
+}
+.request-card-heading small {
+  font-size: 11px;
+  color: #6f839b;
+  overflow-wrap: anywhere;
+}
+.request-card-heading .badge {
+  font-size: 10px;
+  max-width: 120px;
+  white-space: normal;
+  text-align: center;
+}
+.request-amount {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  font-weight: 650;
+  margin: 20px 0 12px;
+  overflow-wrap: anywhere;
+}
+.request-amount small {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6d839c;
+}
+.request-amount > span {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 9px;
+  background: #f0f3f7;
+  border-radius: 8px;
+  margin-left: 10px;
+  letter-spacing: 0;
+}
+.request-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: #778ba1;
+  margin-bottom: 15px;
+}
+.request-address {
+  font-size: 12px;
+  color: #61768f;
+  margin: 12px 0 20px;
+}
+.request-address summary {
+  cursor: pointer;
+}
+.request-address code {
+  display: block;
+  padding: 12px 0;
+  overflow-wrap: anywhere;
+}
+.request-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.request-check input {
+  margin-top: 4px;
+}
+.request-card form {
+  border-top: 1px solid #edf0f5;
+  padding-top: 20px;
+}
+.request-withdraw-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6f839b;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .request-card {
+    padding: 17px;
+  }
+  .request-filters {
+    flex-wrap: wrap;
+  }
+  .request-filters > input {
+    flex-basis: 100%;
+  }
+  .request-inbox {
+    padding: 20px;
+  }
+  .request-inbox-heading h2 {
+    font-size: 23px;
+  }
+  .request-card-heading {
+    gap: 8px;
+  }
+  .request-card-heading .asset-logo {
+    width: 28px;
+    height: 28px;
+  }
+  .request-card-heading .badge {
+    max-width: 95px;
+  }
+}
