@@ -1,3 +1,4 @@
+import { mainAccount } from "./accounts.js";
 import { assetLogo } from "./asset-logos.js";
 import { icon } from "./icons.js";
 import { t, lang, setLanguage, languages, errorText } from "./i18n.js";
@@ -81,14 +82,14 @@ const telegram =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 3.4 18.2 20c-.3 1.2-1 1.5-2 1l-5.2-3.9-2.5 2.4c-.3.3-.5.5-1 .5l.4-5.3L17.6 6c.4-.4-.1-.6-.6-.3L5 13.3l-5.1-1.6c-1.1-.3-1.1-1.1.2-1.6L20 2.4c.9-.3 1.7.2 1.6 1z"/></svg>';
 
 document.querySelector("#site-header").innerHTML =
-  `<a href="#main" class="skip">${t("home")}</a><header class="header ${me.user ? "has-account" : ""}"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" data-language aria-label="${t("language")}">${languages.map((l) => '<option value="' + l + '" ' + (l === lang ? "selected" : "") + ">" + l.toUpperCase() + "</option>").join("")}</select>${me.user ? `<div class="nav-funds"><a href="/wallet.html" class="nav-balance" aria-label="${t("demoBalance")} · DEMO $"><span class="nav-balance-caption">${t("demoBadge")}</span><span class="nav-balance-number"><strong id="nav-balance-value" aria-live="polite">—</strong><small>${status.demo ? "DEMO $" : "USDT"}</small></span></a><a href="/deposit.html" class="btn nav-deposit">${icon("deposit")}<span>${t("depositAction")}</span></a></div><div class="nav-account-tools"><details class="account-menu nav-notifications"><summary class="iconbtn nav-tool" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details><details class="account-menu nav-profile"><summary class="iconbtn nav-avatar" aria-label="${t("profile")}"><span>${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span></summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "wallet", "orders", "history", "security"].map((k) => link(k)).join("")}${me.user.role === "admin" ? '<a href="/admin/">' + t("admin") + "</a>" : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><button class="iconbtn mobile-toggle nav-tool" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div>` : `${link("login", "login-link")}${link("signup", "btn small")}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button>`}</div></div></header>`;
+  `<a href="#main" class="skip">${t("home")}</a><header class="header ${me.user ? "has-account" : ""}"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" data-language aria-label="${t("language")}">${languages.map((l) => '<option value="' + l + '" ' + (l === lang ? "selected" : "") + ">" + l.toUpperCase() + "</option>").join("")}</select>${me.user ? `<div class="nav-funds"><a href="/wallet.html" class="nav-balance" aria-label="${t("mainAccount")} · USDT"><span class="nav-balance-caption">${t("mainAccount")}</span><span class="nav-balance-number"><strong id="nav-balance-value" aria-live="polite">—</strong><small>USDT</small></span></a><a href="/deposit.html" class="btn nav-deposit">${icon("deposit")}<span>${t("depositAction")}</span></a></div><div class="nav-account-tools"><details class="account-menu nav-notifications"><summary class="iconbtn nav-tool" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details><details class="account-menu nav-profile"><summary class="iconbtn nav-avatar" aria-label="${t("profile")}"><span>${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span></summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "wallet", "orders", "history", "security"].map((k) => link(k)).join("")}${me.user.role === "admin" ? '<a href="/admin/">' + t("admin") + "</a>" : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><button class="iconbtn mobile-toggle nav-tool" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div>` : `${link("login", "login-link")}${link("signup", "btn small")}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button>`}</div></div></header>`;
 
 async function refreshNavBalance() {
   if (!me.user || refreshNavBalance.pending) return;
   refreshNavBalance.pending = true;
   const el = document.querySelector("#nav-balance-value");
   try {
-    const r = await api("/demo/account");
+    const r = await mainAccount();
     if (el) {
       el.textContent = money(r.available);
       el.removeAttribute("title");
@@ -200,7 +201,7 @@ document.addEventListener("input", (event) => {
   if (event.target.setCustomValidity) event.target.setCustomValidity("");
 });
 function heading(key = page, sub = "") {
-  return `<div class="page-head"><div class="eyebrow">OXION / DEMO</div><h1>${t(key)}</h1>${sub ? `<p>${t(sub)}</p>` : ""}</div>`;
+  return `<div class="page-head"><div class="eyebrow">OXION</div><h1>${t(key)}</h1>${sub ? `<p>${t(sub)}</p>` : ""}</div>`;
 }
 function standard(content, key = page, sub = "") {
   main.innerHTML = `<div class="wrap">${heading(key, sub)}<div class="page-content">${content}</div></div>`;
@@ -274,7 +275,7 @@ async function renderMarkets(home = false) {
       ],
       rows.map(
         (m) =>
-          `<tr><td><div class="coin-name">${coin(m.asset)}<div><strong>${esc(m.asset)}</strong><span class="coin-sub">${esc(names[m.asset])}</span></div></div></td><td><strong>${money(m.price, Number(m.price) < 1 ? 5 : 2)}</strong></td><td class="change ${Number(m.change) < 0 ? "negative" : ""}">${m.change === null ? "—" : `${Number(m.change) > 0 ? "+" : ""}${money(m.change)}%`}</td><td>${money(m.volume, 0)}</td><td>${m.supported ? `<a class="btn small outline" href="/trade.html?symbol=${esc(m.symbol)}">${t("trade")} ${icon("arrow")}</a>` : `<span class="badge">${t("unsupported")}</span>`}</td></tr>`,
+          `<tr><td><div class="coin-name">${coin(m.asset)}<div><strong>${esc(m.asset)}</strong><span class="coin-sub">${esc(names[m.asset])}</span></div></div></td><td><strong>${money(m.price, Number(m.price) < 1 ? 5 : 2)}</strong></td><td class="change ${Number(m.change) < 0 ? "negative" : ""}">${m.change === null ? "—" : `${Number(m.change) > 0 ? "+" : ""}${money(m.change)}%`}</td><td>${money(m.volume, 0)}</td><td>${["BTC", "ETH"].includes(m.asset) ? `<a class="btn small outline" href="/trade.html?asset=${esc(m.asset)}USD&amp;account=demo">${t("trade")} ${icon("arrow")}</a>` : `<span class="badge">${t("unsupported")}</span>`}</td></tr>`,
       ),
     );
   };
@@ -324,8 +325,18 @@ async function renderMarkets(home = false) {
   }, 30000);
 }
 async function home() {
-  main.innerHTML = `<section class="hero-zone"><div class="wrap"><div class="hero"><div><div class="eyebrow"><span class="pill">OXION DEMO</span></div><h1>${t("demoTitle")}</h1><p>${t("demoIntro")}</p><div class="hero-actions"><a class="btn" href="/trade.html">${t("openDemo")}</a>${!me.user ? link("signup", "btn outline") : link("profile", "btn outline")}</div><div class="hero-note"><span>${t("demoVirtual")}</span></div></div><div class="demo-landing-card"><span class="demo-chip">${t("demoBadge")}</span><strong>$10,000.00</strong><p>${t("demoVirtual")}</p><div class="demo-landing-directions"><span>${t("up")}</span><span>${t("down")}</span></div><p>${t("simulatedPrices")}</p></div></div></div></section><div class="wrap"><section class="section"><div class="grid3">${["demoBadge", "payoutLabel", "sourceHealth"].map((key, i) => `<article class="panel"><h3>${t(key)}</h3><p class="hint">${t(["demoVirtual", "payoutExplain", "demoRules"][i])}</p></article>`).join("")}</div></section><section class="section"><h2>${t("faq")}</h2>${faq()}</section></div>`;
+  main.innerHTML = `<section class="hero-zone"><div class="wrap"><div class="hero"><div><div class="eyebrow"><span class="pill">OXION</span>${t("yourPace")}</div><h1>${t("homeTitle")}</h1><p>${t("homeIntro")}</p><div class="hero-actions"><a class="btn" href="/trade.html">${t("tradeAction")}${icon("arrow")}</a><a class="btn outline" href="/deposit.html">${icon("deposit")}${t("depositAction")}</a></div><div class="hero-note"><span>${icon("shield")} ${t("accountChoice")}</span><span>${icon("check")} ${t("clearFees")}</span></div></div><div class="hero-art" role="img" aria-label="${t("visualOnly")}"><div class="orbital"></div><div class="orbital two"></div><div class="brand-sculpture" aria-hidden="true"><img src="/assets/oxion-logo.png" alt="" width="1774" height="887"></div><div class="floating top"><div class="tiny">OXION</div><strong>${t("yourPace").split(".")[0]}</strong><div class="mini-bars">${[12, 18, 14, 23, 19, 26, 22, 30, 25, 35, 31, 39].map((h) => `<i style="height:${h}px"></i>`).join("")}</div></div><div class="floating bottom"><div class="tiny">${t("multiAsset")}</div><strong class="asset-wordmark">BTC <span>/</span> ETH <span>/</span> SOL</strong></div></div></div><div class="ticker-strip" id="ticker-strip">${["BTC", "ETH", "BNB", "SOL"].map((a) => `<div class="ticker"><span class="pair">${a} / USDT</span><div class="price">—</div><small>${t("loading")}</small></div>`).join("")}</div></div></section><div class="wrap"><section class="section home-terminal-section"><div class="section-title"><div><span class="label">OXION TRADE</span><h2>${t("terminalTitle")}</h2><p>${t("terminalIntro")}</p></div><a href="/trade.html" class="text-link">${t("tradeAction")} ${icon("arrow")}</a></div><div class="home-terminal-card"><div class="home-chart-preview" aria-hidden="true"><span>XAU / USD</span><svg viewBox="0 0 600 190" preserveAspectRatio="none"><path d="M0 140 L35 125 L70 150 L105 110 L140 118 L175 70 L210 95 L245 72 L280 105 L315 85 L350 36 L385 55 L420 30 L455 60 L490 18 L530 40 L570 12 L600 24" fill="none" stroke="currentColor" stroke-width="3"/></svg><div><span>${t("up")}</span><span>${t("down")}</span></div></div><div class="home-terminal-copy"><h3>${t("accountChoice")}</h3><p>${t("accountChoiceIntro")}</p><div class="account-feature"><strong>${t("demoBadge")}</strong><span>$10,000 · ${t("demoVirtual")}</span></div><div class="account-feature"><strong>${t("mainAccount")}</strong><span>${t("mainAccountInfo")}</span></div><a class="btn" href="/trade.html?account=demo">${t("openDemo")}</a></div></div></section><section class="section"><div class="section-title"><div><h2>${t("featured")}</h2><p>${t("featuredSub")}</p></div>${link("promotions", "text-link")}</div>${promotions()}<div id="active-campaigns"></div></section><section class="section"><div class="section-title"><div><h2>${t("marketOverview")}</h2><p>${t("marketSub")}</p></div><a href="/markets.html" class="text-link">${t("viewAll")} ${icon("arrow")}</a></div>${marketTable()}</section><section class="section"><div class="section-title"><div><h2>${t("how")}</h2><p>${t("howSub")}</p></div></div><div class="steps">${[1, 2, 3].map((i) => `<div><div class="step-icon">${icon(["user", "shield", "trade"][i - 1])}</div><div class="step-num">0${i}</div><h3>${t("step" + i)}</h3><p>${t("step" + i + "Desc")}</p></div>`).join("")}</div></section><section class="section security-section"><div class="section-title"><div><h2>${t("securityTitle")}</h2><p>${t("securityIntro")}</p></div>${link("security", "text-link")}</div><div class="grid3">${["shield", "history", "user"].map((x, i) => `<article class="panel">${icon(x)}<h3>${t("securityFeature" + (i + 1))}</h3><p>${t("securityDetail" + (i + 1))}</p></article>`).join("")}</div></section><section class="section"><div class="section-title"><h2>${t("faq")}</h2>${link("faq", "text-link")}</div>${faq()}<div class="support-banner">${icon("support")}<div><h3>${t("needHelp")}</h3><p>${t("supportIntro")}</p></div>${link("support", "btn outline")}</div></section><section class="cta"><div><h2>${t("ctaTitle")}</h2><p>${t("ctaSub")}</p></div>${link("signup", "btn")}</section></div>`;
+  renderMarkets(true);
+  await activeCampaigns();
 }
+function needAuth() {
+  if (me.user) return false;
+  standard(
+    `<div class="panel empty"><p>${t("authRequired")}</p>${link("login", "btn primary")}</div>`,
+  );
+  return true;
+}
+
 async function authPage() {
   if (
     page === "login" &&
@@ -442,14 +453,14 @@ async function security() {
     [t("date"), "IP", t("user"), t("action")],
     r.sessions.map(
       (s) =>
-        `<tr><td>${date(s.created_at)}</td><td>${esc(s.ip)}</td><td>${esc(s.agent.slice(0, 65))}</td><td>${s.current ? `<span class="badge ok">${t("current")}</span>` : `<button class="btn small outline" data-revoke="${esc(s.hash)}">${t("revoke")}</button>`}</td></tr>`,
+        `<tr><td>${date(s.created_at)}</td><td>${esc(s.ip)}</td><td>${esc(String(s.agent || "—").slice(0, 65))}</td><td>${s.current ? `<span class="badge ok">${t("current")}</span>` : `<button class="btn small outline" data-revoke="${esc(s.hash)}">${t("revoke")}</button>`}</td></tr>`,
     ),
   );
   document.querySelector("#login-history").innerHTML = table(
     [t("date"), "IP", t("user")],
     r.history.map(
       (s) =>
-        `<tr><td>${date(s.created_at)}</td><td>${esc(s.ip)}</td><td>${esc(s.agent.slice(0, 70))}</td></tr>`,
+        `<tr><td>${date(s.created_at)}</td><td>${esc(s.ip)}</td><td>${esc(String(s.agent || "—").slice(0, 70))}</td></tr>`,
     ),
   );
   document.querySelectorAll("[data-revoke]").forEach(
@@ -490,10 +501,10 @@ const bucketKey = {
 };
 async function wallet() {
   if (needAuth()) return;
-  const r = await api("/demo/account");
+  const r = await mainAccount();
   const balance = r.available;
   standard(
-    `<section class="wallet-sheet"><div class="profile-sheet-heading"><span>${t("wallet")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="wallet-single-balance"><div class="wallet-emblem">${icon("wallet")}</div><span class="wallet-balance-label">${t("demoBalance")}</span><div class="wallet-single-amount"><strong>${money(balance)}</strong><span>DEMO $</span></div><p class="hint">${t("demoVirtual")}</p></div><div class="wallet-single-actions"><a class="btn" href="/deposit.html">${icon("deposit")}${t("deposit")}</a><a class="btn soft" href="/withdraw.html">${icon("withdraw")}${t("withdraw")}</a></div></section>`,
+    `<section class="wallet-sheet"><div class="profile-sheet-heading"><span>${t("wallet")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="wallet-single-balance"><div class="wallet-emblem">${icon("wallet")}</div><span class="wallet-balance-label">${t("mainAccount")}</span><div class="wallet-single-amount"><strong>${money(balance)}</strong><span>USDT</span></div><p class="hint">${t("mainAccountInfo")}</p><a class="text-link" href="/trade.html?account=demo">${t("demoBadge")} · $10,000 ${icon("arrow")}</a></div><div class="wallet-single-actions"><a class="btn" href="/deposit.html">${icon("deposit")}${t("deposit")}</a><a class="btn soft" href="/withdraw.html">${icon("withdraw")}${t("withdraw")}</a></div></section>`,
   );
 }
 async function deposit() {
@@ -1180,13 +1191,10 @@ try {
       await wallet();
       break;
     case "deposit":
-      standard(
-        `<section class="transfer-sheet" style="margin:auto"><h2>${t("deposit")}</h2>${notice(t("demoDisabled"))}<p class="hint">${t("demoVirtual")}</p><a class="btn primary" href="/trade.html">${t("openDemo")}</a></section>`,
-      );
-      break;
     case "withdraw":
+      if (needAuth()) break;
       standard(
-        `<section class="transfer-sheet" style="margin:auto"><h2>${t("withdraw")}</h2>${notice(t("demoDisabled"))}<p class="hint">${t("demoVirtual")}</p><a class="btn primary" href="/trade.html">${t("openDemo")}</a></section>`,
+        `<section class="transfer-sheet payment-overview"><div class="profile-sheet-heading"><span>${t(page)}</span><a class="profile-close" href="/wallet.html" aria-label="${t("wallet")}">×</a></div><div class="crypto-rail"><span>${coin("USDT")} USDT · ${t("cryptoOnly")}</span></div><div class="payment-status">${icon("shield")}<h2>${t("paymentState")}</h2><p>${t("paymentPending")}</p></div><div class="wallet-single-actions"><a class="btn" href="/wallet.html">${t("wallet")}</a><a class="btn soft" href="/support.html">${t("support")}</a></div><a class="text-link payment-demo-link" href="/trade.html?account=demo">${t("openDemo")} ${icon("arrow")}</a></section>`,
       );
       break;
     case "orders":

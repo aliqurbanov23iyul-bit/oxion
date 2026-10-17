@@ -1,3 +1,4 @@
+import { siteCopy } from "./site-i18n.js";
 import { directionalCopy } from "./directional-i18n.js";
 export const languages = ["az", "en", "tr", "ru"];
 const data = {
@@ -1256,7 +1257,7 @@ Object.assign(data, {
   ],
   waiting: ["Gözləyin…", "Please wait…", "Bekleyin…", "Подождите…"],
 });
-Object.assign(data, directionalCopy);
+Object.assign(data, directionalCopy, siteCopy);
 export let lang = languages.includes(localStorage.getItem("oxion-language"))
   ? localStorage.getItem("oxion-language")
   : "az";

@@ -258,6 +258,7 @@ export async function demoFeed(db, now = Date.now()) {
   });
 }
 export async function openDemo(db, user, b, key, clock = Date.now) {
+  if (b.account && b.account !== "demo") fail(403, "REAL_MONEY_DISABLED");
   if (typeof key !== "string" || !/^[a-zA-Z0-9-]{8,100}$/.test(key))
     fail(400, "IDEMPOTENCY_CONFLICT");
   const v = stake(b.amount);

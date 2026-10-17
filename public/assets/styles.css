@@ -4729,3 +4729,344 @@ body[data-page="wallet"] .page-content {
     display: none;
   }
 }
+/* Responsive layout and pointer targets shared by every OXION document. */
+main,
+.page-content,
+.wrap,
+.panel,
+.section,
+.footergrid > *,
+.grid3 > *,
+.account-workspace > *,
+.profile-side,
+.transfer-layout > * {
+  min-width: 0;
+}
+img,
+video {
+  max-width: 100%;
+}
+input,
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+h1,
+h2,
+h3,
+p,
+.notice,
+.hint,
+.account-dropdown strong,
+.account-dropdown small {
+  overflow-wrap: anywhere;
+}
+.table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+.account-dropdown {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 110px);
+  overflow-y: auto;
+}
+.account-menu:not([open]) > .account-dropdown {
+  display: none;
+}
+.navlinks.open {
+  max-height: calc(100dvh - 90px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.hero-art {
+  pointer-events: none;
+}
+.hero-actions {
+  position: relative;
+  z-index: 4;
+  flex-wrap: wrap;
+}
+.home-terminal-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 32px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 30px;
+  align-items: center;
+}
+.home-chart-preview {
+  background: #101e31;
+  border-radius: 22px;
+  padding: 24px;
+  color: #22d2c6;
+  min-width: 0;
+}
+.home-chart-preview > span {
+  color: #fff;
+  font-weight: 700;
+}
+.home-chart-preview svg {
+  width: 100%;
+  height: 190px;
+  margin: 20px 0;
+  display: block;
+}
+.home-chart-preview > div {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.home-chart-preview > div span {
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: #154d43;
+  color: #7be4be;
+  flex: 1;
+  text-align: center;
+}
+.home-chart-preview > div span + span {
+  background: #562e3e;
+  color: #ffadbb;
+}
+.home-terminal-copy h3 {
+  font-size: 26px;
+  margin-top: 0;
+}
+.home-terminal-copy p {
+  color: #61738a;
+  line-height: 1.7;
+}
+.account-feature {
+  display: grid;
+  gap: 6px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e7edf3;
+}
+.account-feature span {
+  font-size: 13px;
+  color: #61738a;
+}
+.home-terminal-copy > .btn {
+  margin-top: 20px;
+}
+.payment-overview {
+  margin: 0 auto;
+  max-width: 540px;
+}
+.payment-status {
+  text-align: center;
+  padding: 36px 0;
+  color: #667990;
+}
+.payment-status > svg {
+  width: 42px;
+  height: 42px;
+  color: #0c9d9c;
+}
+.payment-status h2 {
+  font-size: 21px;
+  color: var(--ink);
+}
+.payment-status p {
+  line-height: 1.8;
+}
+.payment-demo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 25px;
+}
+.direction-account > label,
+.direction-account > select,
+.direction-account > strong,
+.direction-account > small {
+  grid-column: 1/-1;
+}
+.direction-account > select {
+  width: 100%;
+  background: #192c43;
+  color: #edf8ff;
+  border: 1px solid #36536e;
+  border-radius: 12px;
+  padding: 11px;
+}
+.direction-account .trade-account-label {
+  color: #9eb3c9;
+  font-size: 12px;
+}
+.direction-order #main-trade-state .notice {
+  background: #1a2d43;
+  border-color: #36536e;
+  color: #d7e6f5;
+  font-size: 12px;
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+.directional-terminal .direction-hint {
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.5;
+}
+@media (max-width: 760px) {
+  .home-terminal-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 20px;
+  }
+  .home-terminal-copy h3 {
+    font-size: 23px;
+  }
+  .hero-note {
+    flex-wrap: wrap;
+  }
+  .hero-note > span {
+    min-width: 0;
+    white-space: normal;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 9vw, 48px);
+  }
+  .section-title,
+  .support-banner,
+  .cta {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .section-title > div {
+    min-width: 0;
+  }
+  .section-title > a {
+    flex-shrink: 0;
+  }
+  .support-banner > div {
+    min-width: 0;
+    flex: 1 1 190px;
+  }
+  .btn,
+  button,
+  summary {
+    min-height: 44px;
+  }
+  .profile-close {
+    min-width: 44px;
+    text-align: center;
+  }
+  .profile-row > strong {
+    overflow-wrap: anywhere;
+  }
+  .profile-identity p {
+    overflow-wrap: anywhere;
+  }
+  .profile-sheet,
+  .transfer-sheet,
+  .wallet-sheet {
+    max-width: 100%;
+    padding: 22px;
+  }
+  .form-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .table-panel .tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .table-panel .search {
+    flex: 1 1 100%;
+    margin: 5px 0;
+  }
+  .table-panel .tabs > button {
+    padding: 8px 12px;
+  }
+  .footergrid {
+    gap: 24px;
+  }
+  .direction-positions .direction-position-tabs {
+    flex-wrap: wrap;
+  }
+  .direction-position-tabs > button {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .direction-chart-bottom {
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 10px;
+  }
+  .direction-chart-tools > span {
+    max-width: 55%;
+    font-size: 11px;
+  }
+  .direction-order #direction-form > label {
+    order: 1;
+  }
+  .direction-order #duration-state {
+    order: 2;
+    grid-column: 1/-1;
+    display: block;
+  }
+  .direction-order .direction-payout {
+    order: 3;
+  }
+  .direction-order .direction-return {
+    order: 4;
+  }
+  .direction-order #direction-error {
+    order: 5;
+  }
+  .direction-order .direction-button {
+    order: 6;
+  }
+  .direction-order .direction-login {
+    order: 7;
+  }
+  .direction-order .direction-rule {
+    order: 8;
+  }
+  .support-float {
+    right: 12px;
+    bottom: 12px;
+    min-width: 44px;
+    max-width: 130px;
+  }
+  .support-float > span {
+    display: none;
+  }
+}
+@media (max-width: 380px) {
+  .hero-actions > .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .header .nav {
+    gap: 8px;
+  }
+  .navright {
+    gap: 6px;
+  }
+  .navright > .btn {
+    padding: 10px 12px;
+  }
+  .direction-order {
+    padding: 16px;
+  }
+  .direction-order form {
+    gap: 10px;
+  }
+  .direction-stake input {
+    font-size: 15px;
+  }
+  .direction-payout {
+    padding: 12px;
+  }
+  .profile-sheet,
+  .wallet-sheet,
+  .transfer-sheet {
+    padding: 18px;
+  }
+}

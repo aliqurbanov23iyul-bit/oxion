@@ -1,3 +1,4 @@
+import { mainAccount } from "./accounts.js";
 import {
   api,
   me,
@@ -47,6 +48,12 @@ export async function renderDirectional(standard) {
   const stored =
     new URLSearchParams(location.search).get("asset") ||
     localStorage.getItem("oxion-directional-asset");
+  let accountMode =
+    new URLSearchParams(location.search).get("account") ||
+    localStorage.getItem("oxion-trade-account") ||
+    "demo";
+  if (!["demo", "real"].includes(accountMode)) accountMode = "demo";
+  let mainBalance = null;
   let selected = [
       "XAUUSD",
       "XAGUSD",
@@ -100,7 +107,7 @@ export async function renderDirectional(standard) {
       )
       .join(
         "",
-      )}</nav><label class="direction-search"><span class="hidden">${t("search")}</span><input id="direction-search" type="search" aria-label="${t("search")}" placeholder="${t("search")}"></label><div class="direction-categories">${["all", "favorites", "crypto", "metals", "forex", "stocks"].map((v, i) => `<button type="button" data-category="${v}" class="${i === 0 ? "active" : ""}">${t(v)}</button>`).join("")}</div><div id="direction-assets" class="direction-assets">${t("loading")}</div></aside><div class="direction-center"><div class="direction-market-heading"><div><span class="demo-chip">${t("demoBadge")}</span><h2 id="direction-pair">XAU / USD</h2><p>${t("simulatedPrices")}</p></div><div class="direction-live-price"><strong id="direction-price">—</strong><small id="direction-health" role="status">${t("loading")}</small></div></div><section class="direction-chart-card"><div class="direction-chart-tools"><span>${t("simulatedPrices")}</span><div>${[30, 60, 300].map((s) => `<button type="button" data-chart-window="${s}" class="${s === 60 ? "active" : ""}">${s < 60 ? s + "s" : s / 60 + "m"}</button>`).join("")}</div></div><canvas id="direction-chart" role="img" aria-label="${t("chart")}"></canvas><div class="direction-chart-bottom"><span id="direction-last">—</span><span>${t("demoVirtual")}</span></div></section><section class="direction-positions"><div class="direction-position-tabs"><button data-position-tab="open" class="active">${t("openPositions")} <span id="open-count">0</span></button><button data-position-tab="closed">${t("closedPositions")}</button><a href="/history.html">${t("history")} ${icon("arrow")}</a></div><div id="direction-positions">${me.user ? t("loading") : notice(t("authRequired"))}</div></section></div><aside class="direction-order"><div class="direction-account"><span>${t("demoBadge")}</span><strong id="direction-balance">—</strong><small>${t("demoVirtual")}</small></div><form id="direction-form"><label>${t("duration")}<select name="duration" id="direction-duration">${[3, 5, 15, 30, 60, 300].map((s) => `<option value="${s}" ${s === 3 ? "selected" : ""}>${s < 60 ? s + " s" : s / 60 + " min"}</option>`).join("")}</select></label><small id="duration-state" class="direction-hint"></small><label>${t("amount")}<span class="direction-stake"><button type="button" id="stake-less" aria-label="−">−</button><input name="amount" value="10" inputmode="decimal" autocomplete="off" pattern="[0-9]+([.][0-9]{1,2})?" required aria-label="${t("amount")}"><button type="button" id="stake-more" aria-label="+">+</button></span></label><div class="direction-payout"><span>${t("payoutLabel")}</span><strong id="direction-payout">87%</strong><small>${t("payoutExplain")}</small></div><div class="direction-return"><span>${t("potentialProfit")}<b id="direction-profit">$8.70</b></span><span>${t("potentialReturn")}<b id="direction-return">$18.70</b></span><span>${t("possibleLoss")}<b id="direction-loss">$10.00</b></span></div><div id="direction-error" role="status"></div><button type="button" id="direction-up" class="direction-button higher" disabled>${t("up")}</button><button type="button" id="direction-down" class="direction-button lower" disabled>${t("down")}</button>${!me.user ? `<a class="direction-login" href="/login.html">${t("login")}</a>` : !me.user.verified ? `<a href="/profile.html">${t("emailRequired")}</a>` : ""}<p class="direction-rule">${t("demoRules")}</p></form></aside></div>`,
+      )}</nav><label class="direction-search"><span class="hidden">${t("search")}</span><input id="direction-search" type="search" aria-label="${t("search")}" placeholder="${t("search")}"></label><div class="direction-categories">${["all", "favorites", "crypto", "metals", "forex", "stocks"].map((v, i) => `<button type="button" data-category="${v}" class="${i === 0 ? "active" : ""}">${t(v)}</button>`).join("")}</div><div id="direction-assets" class="direction-assets">${t("loading")}</div></aside><div class="direction-center"><div class="direction-market-heading"><div><span class="demo-chip">${t("demoBadge")}</span><h2 id="direction-pair">XAU / USD</h2><p>${t("simulatedPrices")}</p></div><div class="direction-live-price"><strong id="direction-price">—</strong><small id="direction-health" role="status">${t("loading")}</small></div></div><section class="direction-chart-card"><div class="direction-chart-tools"><span>${t("simulatedPrices")}</span><div>${[30, 60, 300].map((s) => `<button type="button" data-chart-window="${s}" class="${s === 60 ? "active" : ""}">${s < 60 ? s + "s" : s / 60 + "m"}</button>`).join("")}</div></div><canvas id="direction-chart" role="img" aria-label="${t("chart")}"></canvas><div class="direction-chart-bottom"><span id="direction-last">—</span><span>${t("demoVirtual")}</span></div></section><section class="direction-positions"><div class="direction-position-tabs"><button data-position-tab="open" class="active">${t("openPositions")} <span id="open-count">0</span></button><button data-position-tab="closed">${t("closedPositions")}</button><a href="/history.html">${t("history")} ${icon("arrow")}</a></div><div id="direction-positions">${me.user ? t("loading") : notice(t("authRequired"))}</div></section></div><aside class="direction-order"><div class="direction-account"><label class="trade-account-label" for="trade-account">${t("accountSelect")}</label><select id="trade-account" aria-label="${t("accountSelect")}"><option value="demo" ${accountMode === "demo" ? "selected" : ""}>${t("demoBadge")}</option><option value="real" ${accountMode === "real" ? "selected" : ""}>${t("mainAccount")} · USDT</option></select><strong id="direction-balance">—</strong><small id="trade-account-note">${t(accountMode === "demo" ? "demoVirtual" : "mainAccountInfo")}</small></div><div id="main-trade-state"></div><form id="direction-form"><label>${t("duration")}<select name="duration" id="direction-duration">${[3, 5, 15, 30, 60, 300].map((s) => `<option value="${s}" ${s === 3 ? "selected" : ""}>${s < 60 ? s + " s" : s / 60 + " min"}</option>`).join("")}</select></label><small id="duration-state" class="direction-hint"></small><label>${t("amount")}<span class="direction-stake"><button type="button" id="stake-less" aria-label="−">−</button><input name="amount" value="10" inputmode="decimal" autocomplete="off" pattern="[0-9]+([.][0-9]{1,2})?" required aria-label="${t("amount")}"><button type="button" id="stake-more" aria-label="+">+</button></span></label><div class="direction-payout"><span>${t("payoutLabel")}</span><strong id="direction-payout">87%</strong><small>${t("payoutExplain")}</small></div><div class="direction-return"><span>${t("potentialProfit")}<b id="direction-profit">$8.70</b></span><span>${t("potentialReturn")}<b id="direction-return">$18.70</b></span><span>${t("possibleLoss")}<b id="direction-loss">$10.00</b></span></div><div id="direction-error" role="status"></div><button type="button" id="direction-up" class="direction-button higher" disabled>${t("up")}</button><button type="button" id="direction-down" class="direction-button lower" disabled>${t("down")}</button>${!me.user ? `<a class="direction-login" href="/login.html">${t("login")}</a>` : !me.user.verified ? `<a href="/profile.html">${t("emailRequired")}</a>` : ""}<p class="direction-rule">${t("demoRules")}</p></form></aside></div>`,
   );
   const form = document.querySelector("#direction-form"),
     canvas = document.querySelector("#direction-chart"),
@@ -152,6 +159,7 @@ export async function renderDirectional(standard) {
         ? ""
         : t("feedSlow");
     const disabled =
+      accountMode !== "demo" ||
       pending ||
       !me.user ||
       !me.user.verified ||
@@ -273,15 +281,16 @@ export async function renderDirectional(standard) {
         api("/demo/account"),
         api("/demo/positions"),
       ]);
-      document.querySelector("#direction-balance").textContent = usd(
-        account.available,
-      );
+      document.querySelector("#direction-balance").textContent =
+        accountMode === "demo"
+          ? usd(account.available)
+          : money(mainBalance) + " USDT";
       positions = r.items.map((p) => ({
         ...p,
         opened_ms: Number(p.opened_ms),
         expires_ms: Number(p.expires_ms),
       }));
-      if (!boot)
+      if (!boot && accountMode === "demo")
         for (const p of positions) {
           if (p.status !== "open" && !seen.has(p.id))
             toast(resultText(p), p.status === "lost");
@@ -303,13 +312,14 @@ export async function renderDirectional(standard) {
     }
   }
   async function open(direction) {
-    if (pending) return;
+    if (pending || accountMode !== "demo") return;
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
     if (!previewReturn(form.amount.value, settings.payout)) return;
     const body = {
+      account: "demo",
       asset: selected,
       amount: form.amount.value,
       duration: Number(form.duration.value),
@@ -349,6 +359,49 @@ export async function renderDirectional(standard) {
       setHealth();
     }
   }
+
+  function renderAccountMode() {
+    document.querySelector("#trade-account-note").textContent = t(
+      accountMode === "demo" ? "demoVirtual" : "mainAccountInfo",
+    );
+    document.querySelector("#main-trade-state").innerHTML =
+      accountMode === "real" ? notice(t("mainTradeUnavailable")) : "";
+    document.querySelector(".direction-side-brand span").textContent =
+      accountMode === "demo" ? "DEMO" : "USDT";
+    document.querySelector(".direction-market-heading .demo-chip").textContent =
+      t(accountMode === "demo" ? "demoBadge" : "mainAccount");
+    document
+      .querySelector("#direction-positions")
+      .classList.toggle("hidden", accountMode === "real");
+    setHealth();
+  }
+  document.querySelector("#trade-account").onchange = async (e) => {
+    accountMode = e.target.value;
+    const nextUrl = new URL(location.href);
+    nextUrl.searchParams.set("account", accountMode);
+    history.replaceState(null, "", nextUrl);
+    localStorage.setItem("oxion-trade-account", accountMode);
+    if (accountMode === "real" && me.user) {
+      try {
+        mainBalance = (await mainAccount()).available;
+      } catch (e) {
+        toast(e.message, true);
+      }
+    }
+    document.querySelector("#direction-balance").textContent =
+      accountMode === "real" ? money(mainBalance) + " USDT" : "—";
+    renderAccountMode();
+    if (accountMode === "demo") await loadUser();
+  };
+  if (accountMode === "real" && me.user) {
+    try {
+      mainBalance = (await mainAccount()).available;
+    } catch (e) {
+      toast(e.message, true);
+    }
+  }
+  renderAccountMode();
+
   form.onsubmit = (e) => e.preventDefault();
   form.amount.oninput = changed;
   form.duration.onchange = () => {

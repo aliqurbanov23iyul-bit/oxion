@@ -2,6 +2,8 @@
 
 Node.js 24, PostgreSQL, ayrıca HTML səhifələri və vanilla JavaScript. Hesab, UID, Google girişi, e-poçt və TOTP sistemi saxlanıb. Yeni demo balansları əvvəlki kripto balansından tam ayrıdır.
 
+Ana səhifə və hesab bölmələri OXION brend üslubundadır. Header/profil/pul kisəsi əsas USDT balansını göstərir; trade.html daxilində demo və əsas hesab seçilir. Əsas hesabın seçilməsi real əməliyyatı aktivləşdirmir. [İnterfeys yoxlama hesabatı](docs/UI-REVIEW.md).
+
 ## Yerli başlatma
 
 Layihə qovluğunda:

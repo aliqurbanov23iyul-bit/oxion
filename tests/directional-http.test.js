@@ -59,6 +59,14 @@ test("demo API authenticates, isolates virtual money, ignores forged outcomes an
       status: "won",
       expires_ms: 1,
     };
+    const denied = await call(
+      "/demo/positions",
+      { ...body, account: "real" },
+      true,
+      { "Idempotency-Key": "http-main-denied" },
+    );
+    assert.equal(denied.status, 403);
+    assert.equal(denied.data.error, "REAL_MONEY_DISABLED");
     const opened = await call("/demo/positions", body, true, {
       "Idempotency-Key": "http-repeat",
     });
