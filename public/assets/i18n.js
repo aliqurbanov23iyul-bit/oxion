@@ -126,10 +126,10 @@ const data = {
     "Ваш темп. Ваш контроль.",
   ],
   visualOnly: [
-    "İllüstrasiya · maliyyə məlumatı deyil",
-    "Illustration · not financial data",
-    "İllüstrasyon · finansal veri değil",
-    "Иллюстрация · не финансовые данные",
+    "Bazar interfeysinin illüstrasiyası",
+    "Market interface illustration",
+    "Piyasa arayüzü illüstrasyonu",
+    "Иллюстрация рыночного интерфейса",
   ],
   marketOverview: [
     "Bazara bir baxış",
@@ -248,10 +248,10 @@ const data = {
     "Изучайте рынки",
   ],
   step3Desc: [
-    "Cütlük seç, qrafikləri izlə və sınaq əmri yarat.",
-    "Choose a pair, explore charts and create a test order.",
-    "Çift seç, grafikleri izle ve test emri oluştur.",
-    "Выберите пару, изучите графики и создайте тестовый ордер.",
+    "Cütlük seç, qiymət dinamikasını və sifariş kitabını təhlil et.",
+    "Choose a pair and review price action and the order book.",
+    "Bir çift seç, fiyat hareketlerini ve emir defterini incele.",
+    "Выберите пару и изучите динамику цен и книгу ордеров.",
   ],
   ctaTitle: [
     "Növbəti addımın OXION ilə olsun.",
@@ -266,20 +266,15 @@ const data = {
     "Понятный интерфейс. Удобство. Только спот.",
   ],
   footerDesc: [
-    "Kripto bazarlarına aydın baxış. Yerli sınaq üçün hazırlanmış spot platforması.",
-    "A clearer view of crypto markets. A spot platform built for local testing.",
-    "Kripto piyasalarına net bakış. Yerel test için spot platformu.",
-    "Понятный взгляд на крипторынки. Локальная тестовая спот-платформа.",
+    "Bazar məlumatları, spot cütlüklər və hesab idarəetməsi — aydın, vahid platformada.",
+    "Market insights, spot pairs and account management in one clear platform.",
+    "Piyasa verileri, spot çiftler ve hesap yönetimi tek bir platformda.",
+    "Рыночные данные, спотовые пары и управление аккаунтом на одной платформе.",
   ],
   platform: ["Platforma", "Platform", "Platform", "Платформа"],
   company: ["OXION haqqında", "About OXION", "OXION hakkında", "Об OXION"],
   legal: ["Hüquqi məlumat", "Legal", "Yasal bilgiler", "Правовая информация"],
-  rights: [
-    "OXION · Yerli sınaq layihəsi",
-    "OXION · Local test project",
-    "OXION · Yerel test projesi",
-    "OXION · Локальный тестовый проект",
-  ],
+  rights: ["OXION", "OXION", "OXION", "OXION"],
   socialMissing: [
     "Sosial hesab əlavə edilməyib",
     "Social account not configured",
@@ -408,10 +403,10 @@ const data = {
     "Отправить письмо повторно",
   ],
   smtpMissing: [
-    "Məktub xidməti qoşulmayıb. SMTP konfiqurasiyası olmadan məktub göndərilmir.",
-    "Email service is not configured. No email is sent without SMTP settings.",
-    "E-posta hizmeti bağlı değil. SMTP ayarları olmadan e-posta gönderilmez.",
-    "Почтовый сервис не настроен. Без SMTP письма не отправляются.",
+    "Təsdiq məktubu göndərilməyib. E-poçt xidməti hazırda əlçatan deyil.",
+    "The verification email was not sent. Email delivery is currently unavailable.",
+    "Doğrulama e-postası gönderilmedi. E-posta hizmeti şu anda kullanılamıyor.",
+    "Письмо не отправлено. Сервис электронной почты пока недоступен.",
   ],
   checkEmail: [
     "Məktub göndərilib. E-poçtunuzu yoxlayın.",
@@ -469,10 +464,10 @@ const data = {
     "Ручная корректировка · без вывода",
   ],
   balanceNote: [
-    "Yalnız təsdiqlənmiş kripto depoziti çıxarıla bilən balans yaradır. Bu mühitdə bütün məbləğlər sınaq üçündür.",
-    "Only confirmed crypto deposits create withdrawable funds. All amounts in this environment are for testing.",
-    "Yalnızca onaylı kripto yatırımları çekilebilir bakiye oluşturur. Bu ortamda tüm tutarlar test içindir.",
-    "Только подтверждённые криптодепозиты доступны к выводу. Все суммы здесь тестовые.",
+    "Mövcud, bloklanmış və bonus balanslarını ayrıca izləyin. Manual düzəliş və bonus çıxarıla bilən vəsait sayılmır. Real depozit və çıxarış bağlıdır; mövcud maliyyə qeydləri simulyasiya rejimindədir.",
+    "Available, reserved and bonus balances are shown separately. Manual credits and bonuses are not withdrawable funds. Live deposits and withdrawals are disabled; current financial records are simulated.",
+    "Kullanılabilir, bloke ve bonus bakiyeler ayrıdır. Manuel düzeltmeler ve bonuslar çekilebilir fon sayılmaz. Gerçek yatırma ve çekme kapalıdır; mevcut mali kayıtlar simülasyon kapsamındadır.",
+    "Доступный, зарезервированный и бонусный балансы показаны отдельно. Ручные корректировки и бонусы не доступны к выводу. Реальные переводы отключены; текущие финансовые записи относятся к симуляции.",
   ],
   network: ["Şəbəkə", "Network", "Ağ", "Сеть"],
   address: ["Ünvan", "Address", "Adres", "Адрес"],
@@ -486,10 +481,10 @@ const data = {
     "Получить адрес",
   ],
   custodyMissing: [
-    "Pul kisəsi provayderi qoşulmayıb. Real ünvan, QR və köçürmə bu mühitdə əlçatan deyil.",
-    "Custody provider is not configured. Real addresses, QR codes and transfers are unavailable.",
-    "Cüzdan sağlayıcısı bağlı değil. Gerçek adres, QR ve transfer kullanılamaz.",
-    "Кастодиальный сервис не подключён. Реальные адреса, QR и переводы недоступны.",
+    "Kripto depoziti və çıxarışı hazırda aktiv deyil. Depozit ünvanı verilmir və real vəsait göndərilmir.",
+    "Crypto deposits and withdrawals are currently disabled. No deposit address is issued and no real funds are sent.",
+    "Kripto yatırma ve çekme şu anda aktif değil. Yatırma adresi verilmez ve gerçek fon gönderilmez.",
+    "Ввод и вывод криптовалют пока отключены. Депозитный адрес не выдаётся, реальные средства не отправляются.",
   ],
   amount: ["Məbləğ", "Amount", "Tutar", "Сумма"],
   fee: ["Komissiya", "Fee", "Ücret", "Комиссия"],
@@ -522,10 +517,10 @@ const data = {
     "Проверьте перед подтверждением",
   ],
   simulationOrder: [
-    "Bu yerli sınaq əmridir. Birjaya göndərilmir. İcra yalnız adminin sınaq doldurması ilə modelləşdirilir.",
-    "This is a local test order. It is not sent to an exchange. Fills are simulated by an administrator.",
-    "Bu yerel test emridir. Borsaya gönderilmez. Gerçekleşmeler yönetici tarafından simüle edilir.",
-    "Это локальный тестовый ордер. Он не отправляется на биржу. Исполнение моделирует администратор.",
+    "Simulyasiya rejimi · Əmrlər birjaya göndərilmir və real aktiv alış-satışı yaratmır.",
+    "Simulation mode · Orders are not sent to an exchange and do not buy or sell real assets.",
+    "Simülasyon modu · Emirler borsaya gönderilmez ve gerçek varlık işlemi oluşturmaz.",
+    "Режим симуляции · Ордера не отправляются на биржу и не приводят к покупке или продаже реальных активов.",
   ],
   orderCreated: [
     "Sınaq əmri yaradıldı. Real icra baş verməyib.",
@@ -634,10 +629,10 @@ const data = {
     "Доступна реальная торговля?",
   ],
   faq1a: [
-    "Xeyr. Bu yerli sınaq versiyasıdır. Bazar məlumatı ayrıca açıq API-dən alınır, əmrlər isə yalnız sınaq jurnalında saxlanılır.",
-    "No. This is a local test version. Market data comes from a separate public API; orders are stored in a test ledger.",
-    "Hayır. Yerel test sürümüdür. Piyasa verileri açık API’den gelir; emirler test defterinde tutulur.",
-    "Нет. Это локальная тестовая версия. Данные рынка поступают из публичного API, ордера хранятся в тестовом журнале.",
+    "Bazar məlumatları açıq provayder API-si ilə yenilənir. Real əmrlərin birjaya göndərilməsi və real vəsait köçürmələri hazırda aktiv deyil. Əmr ekranındakı mövcud icra simulyasiyadır.",
+    "Market data updates through a public provider API. Live exchange orders and fund transfers are currently unavailable. Current order execution is simulated.",
+    "Piyasa verileri sağlayıcının açık API’sinden güncellenir. Gerçek borsa emirleri ve fon transferleri henüz aktif değildir. Mevcut emir işlemleri simülasyondur.",
+    "Рыночные данные обновляются через публичный API. Реальные биржевые ордера и переводы средств пока недоступны. Текущее исполнение моделируется.",
   ],
   faq2: [
     "Depozit bonusu necə işləyir?",
@@ -676,10 +671,10 @@ const data = {
     "Используйте уникальный пароль, подтвердите почту, включите TOTP и проверяйте сеансы. UID — публичный идентификатор, не секрет входа.",
   ],
   aboutText: [
-    "OXION spot bazarlarını aydın və rahat interfeysdə birləşdirmək üçün hazırlanan yerli prototipdir. Platforma hazırda maliyyə xidməti göstərmir. İstismarçı hüquqi şəxs, fəaliyyət ölkəsi və tənzimləyici status istifadəyə verilməzdən əvvəl müəyyən edilməlidir.",
-    "OXION is a local prototype for exploring spot markets through a clear, comfortable interface. It does not currently provide a financial service. The legal operator, operating country and regulatory status must be established before launch.",
-    "OXION, spot piyasalarını anlaşılır arayüzde keşfetmek için yerel prototiptir. Şu anda finansal hizmet sunmaz. İşletmeci tüzel kişi, ülke ve düzenleyici durum yayından önce belirlenmelidir.",
-    "OXION — локальный прототип для изучения спотовых рынков. Сейчас финансовые услуги не предоставляются. До запуска необходимо определить оператора, страну и регуляторный статус.",
+    "OXION kriptovalyuta bazarları, spot cütlüklər və hesab idarəetməsini vahid interfeysdə birləşdirir. İstifadəçilər bazar məlumatlarını izləyə, e-poçt təsdiqi və iki mərhələli doğrulama ilə hesablarını idarə edə bilərlər. Real birja icrası, depozit və çıxarış xidmətləri hazırda aktiv deyil.",
+    "OXION brings crypto markets, spot pairs and account management into one interface. Users can follow market data and manage accounts with email verification and two-factor authentication. Live exchange execution, deposits and withdrawals are not currently enabled.",
+    "OXION kripto piyasalarını, spot çiftleri ve hesap yönetimini tek arayüzde birleştirir. Piyasa verilerini izleyebilir, e-posta doğrulaması ve iki aşamalı doğrulama ile hesabınızı yönetebilirsiniz. Gerçek borsa işlemleri, yatırma ve çekme hizmetleri henüz aktif değildir.",
+    "OXION объединяет крипторынки, спотовые пары и управление аккаунтом. Доступны рыночные данные, подтверждение почты и двухфакторная аутентификация. Реальное биржевое исполнение, ввод и вывод пока не включены.",
   ],
   legalDraft: [
     "İlkin mətn · hüquqi baxış tələb olunur",
@@ -688,15 +683,15 @@ const data = {
     "Черновик · требуется юридическая проверка",
   ],
   termsText: [
-    "Yalnız yerli sınaq istifadəsi üçündür. Real vəsait göndərməyin. Hesab məlumatlarınızın təhlükəsizliyinə cavabdehsiniz. Bazar məlumatında gecikmə və kəsinti mümkündür. Yaş, rezidentlik, KYC/AML, sanksiya, mübahisə, ləğv və xidmət qaydaları fəaliyyət ölkəsinə uyğun hüquqi baxışdan keçmədən xidmət ictimai istifadəyə açıla bilməz.",
-    "For local testing only. Do not send real funds. You are responsible for securing your credentials. Market data may be delayed or interrupted. Age, residency, KYC/AML, sanctions, disputes, termination and service rules require jurisdiction-specific legal review before public operation.",
-    "Yalnızca yerel test içindir. Gerçek fon göndermeyin. Giriş bilgilerinizin güvenliğinden sorumlusunuz. Piyasa verileri gecikebilir. Yaş, ikamet, KYC/AML, yaptırımlar, uyuşmazlık ve hizmet kuralları ülkeye özel hukuki inceleme gerektirir.",
+    "Real birja icrası və kripto köçürmələri hazırda aktiv deyil. Real vəsait göndərməyin. Hesab məlumatlarınızın təhlükəsizliyinə cavabdehsiniz. Bazar məlumatında gecikmə və kəsinti mümkündür. Yaş, rezidentlik, KYC/AML, sanksiya, mübahisə, ləğv və xidmət qaydaları fəaliyyət ölkəsinə uyğun hüquqi baxışdan keçmədən xidmət ictimai istifadəyə açıla bilməz.",
+    "Live exchange execution and crypto transfers are not currently enabled. Do not send real funds. You are responsible for securing your credentials. Market data may be delayed or interrupted. Age, residency, KYC/AML, sanctions, disputes, termination and service rules require jurisdiction-specific legal review before public operation.",
+    "Gerçek borsa işlemleri ve kripto transferleri henüz aktif değildir. Gerçek fon göndermeyin. Giriş bilgilerinizin güvenliğinden sorumlusunuz. Piyasa verileri gecikebilir. Yaş, ikamet, KYC/AML, yaptırımlar, uyuşmazlık ve hizmet kuralları ülkeye özel hukuki inceleme gerektirir.",
     "Только для локальных тестов. Не отправляйте реальные средства. Обеспечьте безопасность учётных данных. Возможны задержки данных. Возраст, резидентство, KYC/AML, санкции, споры и правила сервиса требуют проверки по законодательству страны.",
   ],
   privacyText: [
-    "Sınaq bazasında e-poçt, hash edilmiş şifrə, IP, brauzer, sessiya və əməliyyat qeydləri saxlanılır. Sessiya kukisi təhlükəsiz giriş üçündür; reklam izləyicisi istifadə edilmir. SMTP və Google qoşularsa müvafiq provayderə məlumat ötürülür. Hüquqi nəzarətçi, saxlanma müddətləri, ixrac/silmə proseduru və sərhədlərarası ötürmə qaydaları təsdiqlənməlidir.",
-    "The test database stores email, password hashes, IP, browser, session and transaction records. Session cookies support authentication; no advertising trackers are used. SMTP and Google integrations share data with those providers when configured. The controller, retention, export/deletion procedures and cross-border transfers must be defined.",
-    "Test veritabanı e-posta, şifre özeti, IP, tarayıcı, oturum ve işlem kayıtlarını tutar. Oturum çerezi giriş içindir; reklam takibi yoktur. SMTP ve Google bağlanırsa ilgili sağlayıcıyla veri paylaşılır. Veri sorumlusu, saklama, dışa aktarma/silme ve aktarım kuralları belirlenmelidir.",
+    "Platformada e-poçt, hash edilmiş şifrə, IP, brauzer, sessiya və əməliyyat qeydləri saxlanılır. Sessiya kukisi təhlükəsiz giriş üçündür; reklam izləyicisi istifadə edilmir. SMTP və Google qoşularsa müvafiq provayderə məlumat ötürülür. Hüquqi nəzarətçi, saxlanma müddətləri, ixrac/silmə proseduru və sərhədlərarası ötürmə qaydaları təsdiqlənməlidir.",
+    "The platform stores email, password hashes, IP, browser, session and transaction records. Session cookies support authentication; no advertising trackers are used. SMTP and Google integrations share data with those providers when configured. The controller, retention, export/deletion procedures and cross-border transfers must be defined.",
+    "Platform e-posta, şifre özeti, IP, tarayıcı, oturum ve işlem kayıtlarını tutar. Oturum çerezi giriş içindir; reklam takibi yoktur. SMTP ve Google bağlanırsa ilgili sağlayıcıyla veri paylaşılır. Veri sorumlusu, saklama, dışa aktarma/silme ve aktarım kuralları belirlenmelidir.",
     "Тестовая база хранит почту, хеши паролей, IP, браузер, сеансы и операции. Cookie используется для входа; рекламных трекеров нет. При подключении SMTP и Google данные передаются провайдерам. Необходимо определить оператора данных, сроки хранения и процедуры удаления/экспорта.",
   ],
   riskText: [
@@ -802,10 +797,10 @@ const data = {
     "Аккаунт с этой почтой существует. Войдите по паролю; автоматического объединения с Google нет.",
   ],
   googleMissing: [
-    "Google OAuth hesabı və açarları qoşulmayıb.",
-    "Google OAuth credentials are not configured.",
-    "Google OAuth bilgileri yapılandırılmadı.",
-    "Google OAuth не настроен.",
+    "Google ilə giriş hazırda əlçatan deyil. E-poçtla davam edə bilərsiniz.",
+    "Google sign-in is currently unavailable. Continue with email.",
+    "Google ile giriş şu anda kullanılamıyor. E-posta ile devam edebilirsiniz.",
+    "Вход через Google пока недоступен. Продолжите с электронной почтой.",
   ],
   conflict: [
     "Sorğu əvvəlki əməliyyatla uyğun gəlmir və ya status dəyişib.",
@@ -923,11 +918,31 @@ const data = {
   cancelled: ["Ləğv edilib", "Cancelled", "İptal edildi", "Отменён"],
 };
 Object.assign(data, {
+  riskFooter: [
+    "Kriptoaktivlər risk daşıyır. Risk açıqlamasını oxuyun.",
+    "Cryptoassets carry risk. Read the risk disclosure.",
+    "Kripto varlıklar risk taşır. Risk açıklamasını okuyun.",
+    "Криптоактивы связаны с риском. Ознакомьтесь с уведомлением.",
+  ],
+  marketWorkspace: [
+    "Bazar iş məkanı",
+    "Market workspace",
+    "Piyasa çalışma alanı",
+    "Обзор рынка",
+  ],
+  accountOverview: [
+    "Hesab xülasəsi",
+    "Account overview",
+    "Hesap özeti",
+    "Обзор аккаунта",
+  ],
+});
+Object.assign(data, {
   hostingMissing: [
-    "Server bağlantısı hələ qurulmayıb. Baza, miqrasiya və hostinq dəyişənləri tamamlanmalıdır.",
-    "Server setup is incomplete. Configure the database, migration and hosting variables.",
-    "Sunucu kurulumu tamamlanmadı. Veritabanı, geçiş ve ortam değişkenlerini yapılandırın.",
-    "Настройка сервера не завершена. Требуются база данных, миграция и переменные окружения.",
+    "Xidmət hazırda əlçatan deyil. Daha sonra yenidən cəhd edin və ya dəstəyə müraciət edin.",
+    "This service is currently unavailable. Try again later or contact support.",
+    "Hizmet şu anda kullanılamıyor. Daha sonra tekrar deneyin veya desteğe başvurun.",
+    "Сервис пока недоступен. Повторите попытку позже или обратитесь в поддержку.",
   ],
   googleHelp: [
     "Google düyməsini seçin və açılan Google səhifəsində hesabınızı seçərək davam edin.",
@@ -942,10 +957,10 @@ Object.assign(data, {
     'Ясный взгляд на<br><span class="gradient">крипторынки.</span>',
   ],
   brandDescription: [
-    "Canlı bazarları izlə, hesabını təhlükəsiz idarə et və spot ticarəti yerli sınaq mühitində kəşf et.",
-    "Follow live markets, manage your account securely and explore spot trading in a local test environment.",
-    "Canlı piyasaları izle, hesabını güvenle yönet ve yerel test ortamında spot işlemleri keşfet.",
-    "Следите за рынками, управляйте аккаунтом и изучайте спотовую торговлю в локальной тестовой среде.",
+    "Kriptovalyuta bazarlarını izlə, spot cütlükləri müqayisə et və hesabını bir mərkəzdən idarə et.",
+    "Follow crypto markets, compare spot pairs and manage your account in one place.",
+    "Kripto piyasalarını izle, spot çiftleri karşılaştır ve hesabını tek yerden yönet.",
+    "Следите за крипторынками, сравнивайте спотовые пары и управляйте аккаунтом в одном месте.",
   ],
   notifications: ["Bildirişlər", "Notifications", "Bildirimler", "Уведомления"],
   noNotifications: [
@@ -1028,10 +1043,10 @@ Object.assign(data, {
     "Войдите для отправки личных обращений и просмотра истории.",
   ],
   supportNotice: [
-    "Müraciətlər admin panelindən cavablandırılır. Canlı operator xidməti qoşulmayıb.",
-    "Tickets are answered in the admin panel. Live operator service is not connected.",
-    "Talepler yönetim panelinden yanıtlanır. Canlı operatör bağlı değil.",
-    "Ответы отправляются через панель администратора. Онлайн-оператор не подключён.",
+    "Müraciət göndərin və cavabı bu bölmədə izləyin. Canlı çat hazırda əlçatan deyil.",
+    "Submit a ticket and follow replies here. Live chat is currently unavailable.",
+    "Talep gönderin ve yanıtları bu bölümden takip edin. Canlı sohbet şu anda kullanılamıyor.",
+    "Отправьте обращение и отслеживайте ответы здесь. Онлайн-чат пока недоступен.",
   ],
   securityTitle: [
     "Hesabın üzərində nəzarət səndədir.",

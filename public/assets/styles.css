@@ -2101,3 +2101,142 @@ body[data-page="trade"] .hero-zone {
     top: 72px;
   }
 }
+/* OXION professional brand refinement */
+:root {
+  --radius: 18px;
+  --ink: #15243b;
+  --muted: #52657e;
+  --line: #e0e7ef;
+}
+.header {
+  border-bottom: 1px solid #ffffff12;
+}
+.nav {
+  height: 80px;
+}
+.navlinks a {
+  font-weight: 500;
+}
+.hero-zone {
+  background:
+    radial-gradient(ellipse at 80% 45%, #112c43 0, transparent 46%), #080f20;
+}
+.hero {
+  min-height: 440px;
+  padding-top: 52px;
+  padding-bottom: 42px;
+}
+.hero h1 {
+  font-weight: 650;
+  letter-spacing: -2.2px;
+}
+.hero .eyebrow {
+  letter-spacing: 1.4px;
+  font-size: 10px;
+  gap: 12px;
+}
+.hero .pill {
+  white-space: nowrap;
+}
+.hero-art .orbital {
+  border-color: #26445a80;
+}
+.brand-sculpture {
+  width: 176px;
+  height: 176px;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  filter: drop-shadow(0 16px 28px #0003);
+}
+.brand-sculpture img {
+  position: absolute;
+  width: 887px;
+  height: 443.5px;
+  max-width: none;
+  left: -130px;
+  top: -135.5px;
+}
+.floating.top,
+.floating.bottom {
+  transform: none;
+  background: #111f32;
+  border-color: #2b3c52;
+  box-shadow: 0 12px 28px #0002;
+  backdrop-filter: none;
+}
+.asset-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 1px;
+}
+.asset-wordmark span {
+  color: #506981;
+  font-size: 13px;
+}
+.panel {
+  border-radius: 18px;
+  box-shadow: 0 4px 18px #14243b03;
+}
+.section-title h2 {
+  font-size: 29px;
+  letter-spacing: -0.7px;
+  font-weight: 650;
+}
+.table-panel th {
+  color: #53657e;
+  background: #f8fafc;
+  text-transform: none;
+  font-weight: 600;
+}
+.table-panel tbody tr:hover {
+  background: #f8fbfe;
+}
+.footer .copyright {
+  align-items: center;
+  gap: 20px;
+  line-height: 1.7;
+}
+.copyright a:hover {
+  text-decoration: underline;
+}
+.form-card .eyebrow {
+  color: #15717d;
+  font-weight: 600;
+}
+.prose {
+  line-height: 1.9;
+}
+@media (max-width: 1000px) {
+  .navlinks {
+    top: 80px;
+  }
+  body[data-page="trade"] .navlinks {
+    top: 72px;
+  }
+}
+@media (max-width: 760px) {
+  .nav {
+    height: 72px;
+  }
+  .navlinks {
+    top: 72px;
+  }
+  .hero {
+    padding-top: 34px;
+  }
+  .hero h1 {
+    letter-spacing: -1.3px;
+  }
+  .section-title h2 {
+    font-size: 25px;
+  }
+  .copyright {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+}
+.brand-sculpture {
+  border-radius: 50%;
+}
