@@ -81,19 +81,16 @@ const telegram =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 3.4 18.2 20c-.3 1.2-1 1.5-2 1l-5.2-3.9-2.5 2.4c-.3.3-.5.5-1 .5l.4-5.3L17.6 6c.4-.4-.1-.6-.6-.3L5 13.3l-5.1-1.6c-1.1-.3-1.1-1.1.2-1.6L20 2.4c.9-.3 1.7.2 1.6 1z"/></svg>';
 
 document.querySelector("#site-header").innerHTML =
-  `<a href="#main" class="skip">${t("home")}</a><header class="header ${me.user ? "has-account" : ""}"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" data-language aria-label="${t("language")}">${languages.map((l) => '<option value="' + l + '" ' + (l === lang ? "selected" : "") + ">" + l.toUpperCase() + "</option>").join("")}</select>${me.user ? `<div class="nav-funds"><a href="/wallet.html" class="nav-balance" aria-label="${t("available")} · USDT"><span class="nav-balance-caption">${t("available")}</span><span class="nav-balance-number"><strong id="nav-balance-value" aria-live="polite">—</strong><small>USDT</small></span></a><a href="/deposit.html" class="btn nav-deposit">${icon("deposit")}<span>${t("depositAction")}</span></a></div><div class="nav-account-tools"><details class="account-menu nav-notifications"><summary class="iconbtn nav-tool" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details><details class="account-menu nav-profile"><summary class="iconbtn nav-avatar" aria-label="${t("profile")}"><span>${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span></summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "wallet", "orders", "history", "security"].map((k) => link(k)).join("")}${me.user.role === "admin" ? '<a href="/admin/">' + t("admin") + "</a>" : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><button class="iconbtn mobile-toggle nav-tool" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div>` : `${link("login", "login-link")}${link("signup", "btn small")}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button>`}</div></div></header>`;
+  `<a href="#main" class="skip">${t("home")}</a><header class="header ${me.user ? "has-account" : ""}"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" data-language aria-label="${t("language")}">${languages.map((l) => '<option value="' + l + '" ' + (l === lang ? "selected" : "") + ">" + l.toUpperCase() + "</option>").join("")}</select>${me.user ? `<div class="nav-funds"><a href="/wallet.html" class="nav-balance" aria-label="${t("demoBalance")} · DEMO $"><span class="nav-balance-caption">${t("demoBadge")}</span><span class="nav-balance-number"><strong id="nav-balance-value" aria-live="polite">—</strong><small>${status.demo ? "DEMO $" : "USDT"}</small></span></a><a href="/deposit.html" class="btn nav-deposit">${icon("deposit")}<span>${t("depositAction")}</span></a></div><div class="nav-account-tools"><details class="account-menu nav-notifications"><summary class="iconbtn nav-tool" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details><details class="account-menu nav-profile"><summary class="iconbtn nav-avatar" aria-label="${t("profile")}"><span>${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span></summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "wallet", "orders", "history", "security"].map((k) => link(k)).join("")}${me.user.role === "admin" ? '<a href="/admin/">' + t("admin") + "</a>" : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><button class="iconbtn mobile-toggle nav-tool" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div>` : `${link("login", "login-link")}${link("signup", "btn small")}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button>`}</div></div></header>`;
 
 async function refreshNavBalance() {
   if (!me.user || refreshNavBalance.pending) return;
   refreshNavBalance.pending = true;
   const el = document.querySelector("#nav-balance-value");
   try {
-    const r = await api("/wallet");
+    const r = await api("/demo/account");
     if (el) {
-      el.textContent = money(
-        r.items.find((a) => a.asset === "USDT" && a.bucket === "available")
-          ?.balance || "0",
-      );
+      el.textContent = money(r.available);
       el.removeAttribute("title");
     }
   } catch {
@@ -203,7 +200,7 @@ document.addEventListener("input", (event) => {
   if (event.target.setCustomValidity) event.target.setCustomValidity("");
 });
 function heading(key = page, sub = "") {
-  return `<div class="page-head"><div class="eyebrow">OXION / SPOT</div><h1>${t(key)}</h1>${sub ? `<p>${t(sub)}</p>` : ""}</div>`;
+  return `<div class="page-head"><div class="eyebrow">OXION / DEMO</div><h1>${t(key)}</h1>${sub ? `<p>${t(sub)}</p>` : ""}</div>`;
 }
 function standard(content, key = page, sub = "") {
   main.innerHTML = `<div class="wrap">${heading(key, sub)}<div class="page-content">${content}</div></div>`;
@@ -242,7 +239,7 @@ async function activeCampaigns() {
       const text = c.texts[lang] || c.texts.az;
       container.insertAdjacentHTML(
         "beforeend",
-        `<article class="promo"><span class="label">OXION SPOT</span><h3>${esc(text.title)}</h3><p>${esc(text.subtitle || "")}</p><a href="${esc(c.link)}">${esc(text.cta || t("explore"))} ${icon("arrow")}</a>${c.image ? `<img class="campaign-image" src="${esc(c.image)}" alt="">` : `<span class="promo-graphic" aria-hidden="true">${icon("trade")}</span>`}</article>`,
+        `<article class="promo"><span class="label">OXION DEMO</span><h3>${esc(text.title)}</h3><p>${esc(text.subtitle || "")}</p><a href="${esc(c.link)}">${esc(text.cta || t("explore"))} ${icon("arrow")}</a>${c.image ? `<img class="campaign-image" src="${esc(c.image)}" alt="">` : `<span class="promo-graphic" aria-hidden="true">${icon("trade")}</span>`}</article>`,
       );
     }
   } catch (e) {
@@ -327,16 +324,7 @@ async function renderMarkets(home = false) {
   }, 30000);
 }
 async function home() {
-  main.innerHTML = `<section class="hero-zone"><div class="wrap"><div class="hero"><div><div class="eyebrow"><span class="pill">OXION SPOT</span>${t("yourPace")}</div><h1>${t("brandHeadline")}</h1><p>${t("brandDescription")}</p><div class="hero-actions">${link("signup", "btn")}<a class="btn outline" href="/markets.html">${t("explore")}</a></div><div class="hero-note"><span>${icon("shield")} ${t("spotOnly")}</span><span>${icon("check")} ${t("clearFees")}</span></div></div><div class="hero-art" role="img" aria-label="${t("visualOnly")}"><div class="orbital"></div><div class="orbital two"></div><div class="brand-sculpture" aria-hidden="true"><img src="/assets/oxion-logo.png" alt="" width="1774" height="887"></div><div class="floating top"><div class="tiny">OXION SPOT</div><strong>${t("yourPace").split(".")[0]}</strong><div class="mini-bars">${[12, 18, 14, 23, 19, 26, 22, 30, 25, 35, 31, 39].map((h) => `<i style="height:${h}px"></i>`).join("")}</div></div><div class="floating bottom"><div class="tiny">${t("fifteenSub")}</div><strong class="asset-wordmark">BTC <span>/</span> ETH <span>/</span> SOL</strong></div></div></div><div class="ticker-strip" id="ticker-strip">${["BTC", "ETH", "BNB", "SOL"].map((a) => `<div class="ticker"><span class="pair">${a} / USDT</span><div class="price">—</div><small>${t("loading")}</small></div>`).join("")}</div></div></section><div class="wrap"><section class="section"><div class="section-title"><div><h2>${t("featured")}</h2><p>${t("featuredSub")}</p></div>${link("promotions", "text-link")}</div>${promotions()}<div id="active-campaigns"></div></section><section class="section"><div class="section-title"><div><h2>${t("marketOverview")}</h2><p>${t("marketSub")}</p></div><a href="/markets.html" class="text-link">${t("viewAll")} ${icon("arrow")}</a></div>${marketTable()}</section><section class="section"><div class="section-title"><div><h2>${t("how")}</h2><p>${t("howSub")}</p></div></div><div class="steps">${[1, 2, 3].map((i) => `<div><div class="step-icon">${icon(["user", "shield", "trade"][i - 1])}</div><div class="step-num">0${i}</div><h3>${t("step" + i)}</h3><p>${t("step" + i + "Desc")}</p></div>`).join("")}</div></section><section class="section security-section"><div class="section-title"><div><h2>${t("securityTitle")}</h2><p>${t("securityIntro")}</p></div>${link("security", "text-link")}</div><div class="grid3">${["shield", "history", "user"].map((x, i) => `<article class="panel">${icon(x)}<h3>${t("securityFeature" + (i + 1))}</h3><p>${t("securityDetail" + (i + 1))}</p></article>`).join("")}</div></section><section class="section"><div class="section-title"><h2>${t("faq")}</h2>${link("faq", "text-link")}</div>${faq()}<div class="support-banner">${icon("support")}<div><h3>${t("needHelp")}</h3><p>${t("supportIntro")}</p></div>${link("support", "btn outline")}</div></section><section class="cta"><div><h2>${t("ctaTitle")}</h2><p>${t("ctaSub")}</p></div>${link("signup", "btn")}</section></div>`;
-  renderMarkets(true);
-  await activeCampaigns();
-}
-function needAuth() {
-  if (me.user) return false;
-  standard(
-    `<div class="panel empty"><p>${t("authRequired")}</p>${link("login", "btn primary")}</div>`,
-  );
-  return true;
+  main.innerHTML = `<section class="hero-zone"><div class="wrap"><div class="hero"><div><div class="eyebrow"><span class="pill">OXION DEMO</span></div><h1>${t("demoTitle")}</h1><p>${t("demoIntro")}</p><div class="hero-actions"><a class="btn" href="/trade.html">${t("openDemo")}</a>${!me.user ? link("signup", "btn outline") : link("profile", "btn outline")}</div><div class="hero-note"><span>${t("demoVirtual")}</span></div></div><div class="demo-landing-card"><span class="demo-chip">${t("demoBadge")}</span><strong>$10,000.00</strong><p>${t("demoVirtual")}</p><div class="demo-landing-directions"><span>${t("up")}</span><span>${t("down")}</span></div><p>${t("simulatedPrices")}</p></div></div></div></section><div class="wrap"><section class="section"><div class="grid3">${["demoBadge", "payoutLabel", "sourceHealth"].map((key, i) => `<article class="panel"><h3>${t(key)}</h3><p class="hint">${t(["demoVirtual", "payoutExplain", "demoRules"][i])}</p></article>`).join("")}</div></section><section class="section"><h2>${t("faq")}</h2>${faq()}</section></div>`;
 }
 async function authPage() {
   if (
@@ -502,12 +490,10 @@ const bucketKey = {
 };
 async function wallet() {
   if (needAuth()) return;
-  const r = await api("/wallet");
-  const balance =
-    r.items.find((a) => a.asset === "USDT" && a.bucket === "available")
-      ?.balance || "0";
+  const r = await api("/demo/account");
+  const balance = r.available;
   standard(
-    `<section class="wallet-sheet"><div class="profile-sheet-heading"><span>${t("wallet")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="wallet-single-balance"><div class="wallet-emblem">${icon("wallet")}</div><span class="wallet-balance-label">${t("available")}</span><div class="wallet-single-amount"><strong>${money(balance)}</strong><span>USDT</span></div></div><div class="wallet-single-actions"><a class="btn" href="/deposit.html">${icon("deposit")}${t("deposit")}</a><a class="btn soft" href="/withdraw.html">${icon("withdraw")}${t("withdraw")}</a></div></section>`,
+    `<section class="wallet-sheet"><div class="profile-sheet-heading"><span>${t("wallet")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="wallet-single-balance"><div class="wallet-emblem">${icon("wallet")}</div><span class="wallet-balance-label">${t("demoBalance")}</span><div class="wallet-single-amount"><strong>${money(balance)}</strong><span>DEMO $</span></div><p class="hint">${t("demoVirtual")}</p></div><div class="wallet-single-actions"><a class="btn" href="/deposit.html">${icon("deposit")}${t("deposit")}</a><a class="btn soft" href="/withdraw.html">${icon("withdraw")}${t("withdraw")}</a></div></section>`,
   );
 }
 async function deposit() {
@@ -1158,11 +1144,23 @@ try {
       await home();
       break;
     case "markets":
-      standard(marketTable(), "markets", "marketSub");
-      await renderMarkets();
+      {
+        const market = await api("/demo/market");
+        standard(
+          `<section class="panel"><span class="demo-chip">${t("simulatedPrices")}</span><h2>${t("markets")}</h2><p class="hint">${t("demoVirtual")}</p>${table(
+            [t("asset"), t("price"), t("status"), t("action")],
+            market.assets.map(
+              (a) =>
+                `<tr><td>${esc(a.label)}<small class="coin-sub">${t(a.category)}</small></td><td>${esc(a.price || "—")}</td><td>${t(a.healthy ? "sourceHealthy" : "sourceStale")}</td><td><a class="btn small soft" href="/trade.html?asset=${esc(a.symbol)}">${t("trade")}</a></td></tr>`,
+            ),
+          )}</section>`,
+        );
+      }
       break;
     case "trade":
-      await trade();
+      await (
+        await import("./directional-terminal.js")
+      ).renderDirectional(standard);
       break;
     case "signup":
     case "login":
@@ -1182,16 +1180,24 @@ try {
       await wallet();
       break;
     case "deposit":
-      await deposit();
+      standard(
+        `<section class="transfer-sheet" style="margin:auto"><h2>${t("deposit")}</h2>${notice(t("demoDisabled"))}<p class="hint">${t("demoVirtual")}</p><a class="btn primary" href="/trade.html">${t("openDemo")}</a></section>`,
+      );
       break;
     case "withdraw":
-      await withdraw();
+      standard(
+        `<section class="transfer-sheet" style="margin:auto"><h2>${t("withdraw")}</h2>${notice(t("demoDisabled"))}<p class="hint">${t("demoVirtual")}</p><a class="btn primary" href="/trade.html">${t("openDemo")}</a></section>`,
+      );
       break;
     case "orders":
-      await orders();
+      await (
+        await import("./directional-terminal.js")
+      ).renderDemoHistory(standard);
       break;
     case "history":
-      await history();
+      await (
+        await import("./directional-terminal.js")
+      ).renderDemoHistory(standard);
       break;
     case "support":
       await support();
@@ -1223,7 +1229,9 @@ try {
       );
       break;
     case "admin":
-      await (await import("./admin.js")).renderAdmin({ standard, date });
+      await (
+        await import("./directional-admin.js")
+      ).renderDirectionalAdmin({ standard, date });
       break;
     default:
       standard(notice(t("notfoundText")));

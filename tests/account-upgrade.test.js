@@ -20,7 +20,7 @@ test("account API saves names, protects deposit admin routes, serves uploaded an
     server = createApp(
       db,
       { APP_ORIGIN: origin, ENCRYPTION_KEY: "a".repeat(64) },
-      { markets: async () => [] },
+      { markets: async () => [], legacySpot: true },
     ).listen(0, "127.0.0.1");
     await new Promise((r) => server.once("listening", r));
     const base = "http://127.0.0.1:" + server.address().port;

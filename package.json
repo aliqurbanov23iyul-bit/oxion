@@ -17,7 +17,8 @@
     "check:hosting": "node scripts/check-hosting.js",
     "build": "npm run check",
     "key:generate": "node -e \"console.log(require('node:crypto').randomBytes(32).toString('hex'))\"",
-    "db:cleanup": "node scripts/cleanup.js"
+    "db:cleanup": "node scripts/cleanup.js",
+    "worker:demo": "node scripts/demo-worker.js"
   },
   "engines": {
     "node": "24.x"
