@@ -76,6 +76,17 @@ export async function saveMethod(db, admin, b) {
   );
   return result.rows[0];
 }
+export function normalizeDepositTxid(network, value) {
+  const sol = network === "SOL";
+  if (
+    typeof value !== "string" ||
+    !(sol ? /^[1-9A-HJ-NP-Za-km-z]{64,90}$/ : /^(0x)?[a-fA-F0-9]{64}$/).test(
+      value,
+    )
+  )
+    fail(400, "INVALID_TXID");
+  return sol ? value : value.replace(/^0x/, "").toLowerCase();
+}
 export async function submitDeposit(db, user, b, getMarkets = markets) {
   const initial = (
     await db.query(
@@ -84,30 +95,44 @@ export async function submitDeposit(db, user, b, getMarkets = markets) {
     )
   ).rows[0];
   if (!initial) fail(404, "NOT_FOUND");
-  const isSol = initial.network === "SOL";
-  if (
-    !(isSol ? /^[1-9A-HJ-NP-Za-km-z]{64,90}$/ : /^(0x)?[a-fA-F0-9]{64}$/).test(
-      b.txid || "",
-    )
-  )
-    fail(400, "INVALID_TXID");
   const value = amount(b.amount),
-    txid = isSol ? b.txid : b.txid.replace(/^0x/, "").toLowerCase();
-  const old = (
-    await db.query(
-      "SELECT * FROM deposit_requests WHERE network=$1 AND (CASE WHEN network='SOL' THEN txid ELSE regexp_replace(lower(txid),'^0x','') END)=$2",
-      [initial.network, txid],
-    )
-  ).rows[0];
-  if (old) {
+    txid = b.txid ? normalizeDepositTxid(initial.network, b.txid) : null;
+  const requestKey =
+    typeof b.request_key === "string" &&
+    /^[a-zA-Z0-9-]{8,100}$/.test(b.request_key)
+      ? b.request_key
+      : null;
+  if (!txid && !requestKey) fail(400, "INVALID_FORM");
+  const findOld = async (tx) => {
+    if (requestKey) {
+      const old = (
+        await tx.query(
+          "SELECT * FROM deposit_requests WHERE user_id=$1 AND request_key=$2",
+          [user, requestKey],
+        )
+      ).rows[0];
+      if (old) return old;
+    }
+    if (txid)
+      return (
+        await tx.query(
+          "SELECT * FROM deposit_requests WHERE network=$1 AND (CASE WHEN network='SOL' THEN txid ELSE regexp_replace(lower(txid),'^0x','') END)=$2",
+          [initial.network, txid],
+        )
+      ).rows[0];
+  };
+  const match = (old) => {
     if (
       old.user_id !== user ||
       old.method_id !== initial.id ||
-      !new D(old.amount).eq(value)
+      !new D(old.amount).eq(value) ||
+      (txid && normalizeDepositTxid(old.network, old.txid) !== txid)
     )
       fail(409, "IDEMPOTENCY_CONFLICT");
     return old;
-  }
+  };
+  const old = await findOld(db);
+  if (old) return match(old);
   const price = await depositPrice(initial.asset, getMarkets),
     usdValue = value.mul(price);
   if (usdValue.lt(initial.minimum_usd || "10"))
@@ -121,9 +146,10 @@ export async function submitDeposit(db, user, b, getMarkets = markets) {
       )
     ).rows[0];
     if (!method) fail(404, "NOT_FOUND");
-
+    const old = await findOld(tx);
+    if (old) return match(old);
     const result = await tx.query(
-      "INSERT INTO deposit_requests(id,user_id,method_id,asset,network,address,memo,amount,txid,usd_price,usd_value) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT(network,txid) DO NOTHING RETURNING *",
+      "INSERT INTO deposit_requests(id,user_id,method_id,asset,network,address,memo,amount,txid,usd_price,usd_value,request_key) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT DO NOTHING RETURNING *",
       [
         id(),
         user,
@@ -136,22 +162,13 @@ export async function submitDeposit(db, user, b, getMarkets = markets) {
         txid,
         price.toFixed(18),
         usdValue.toFixed(18),
+        requestKey,
       ],
     );
     if (result.rows.length) return result.rows[0];
-    const old = (
-      await tx.query(
-        "SELECT * FROM deposit_requests WHERE network=$1 AND (CASE WHEN network='SOL' THEN txid ELSE regexp_replace(lower(txid),'^0x','') END)=$2",
-        [method.network, txid],
-      )
-    ).rows[0];
-    if (
-      old.user_id !== user ||
-      old.method_id !== method.id ||
-      !new D(old.amount).eq(value)
-    )
-      fail(409, "IDEMPOTENCY_CONFLICT");
-    return old;
+    const found = await findOld(tx);
+    if (!found) fail(409, "IDEMPOTENCY_CONFLICT");
+    return match(found);
   });
 }
 export async function reviewDeposit(db, admin, request, b) {
@@ -175,13 +192,32 @@ export async function reviewDeposit(db, admin, request, b) {
       ])
     ).rows[0];
     if (old) {
-      if (old.approved !== b.approve) fail(409, "IDEMPOTENCY_CONFLICT");
+      if (
+        old.approved !== b.approve ||
+        (b.txid &&
+          old.txid &&
+          normalizeDepositTxid(r.network, b.txid) !== old.txid)
+      )
+        fail(409, "IDEMPOTENCY_CONFLICT");
       return old;
     }
     if (b.approve && b.verified !== true) fail(400, "UNVERIFIED_DEPOSIT");
     let journal = null;
+    const txid = b.approve
+      ? normalizeDepositTxid(r.network, b.txid || r.txid)
+      : null;
     if (b.approve) {
       await lockUser(tx, r.user_id);
+      const duplicate = await tx.query(
+        "SELECT d.id FROM deposit_requests d JOIN deposit_reviews v ON v.request_id=d.id WHERE v.approved=TRUE AND d.network=$1 AND d.id<>$2 AND (CASE WHEN d.network='SOL' THEN coalesce(v.txid,d.txid) ELSE regexp_replace(lower(coalesce(v.txid,d.txid)),'^0x','') END)=$3",
+        [r.network, r.id, txid],
+      );
+      const custody = await tx.query(
+        "SELECT id FROM deposits WHERE network=$1 AND status='confirmed' AND (CASE WHEN network='SOL' THEN txid ELSE regexp_replace(lower(txid),'^0x','') END)=$2",
+        [r.network, txid],
+      );
+      if (duplicate.rows.length || custody.rows.length)
+        fail(409, "IDEMPOTENCY_CONFLICT");
       const a = await account(tx, r.user_id, r.asset, "available"),
         c = await account(tx, null, r.asset, "custody");
       journal = await post(tx, {
@@ -197,8 +233,8 @@ export async function reviewDeposit(db, admin, request, b) {
     }
     return (
       await tx.query(
-        "INSERT INTO deposit_reviews(request_id,actor,approved,reason,journal_id) VALUES($1,$2,$3,$4,$5) RETURNING *",
-        [r.id, admin, b.approve, b.reason, journal],
+        "INSERT INTO deposit_reviews(request_id,actor,approved,reason,journal_id,txid,network) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+        [r.id, admin, b.approve, b.reason, journal, txid, r.network],
       )
     ).rows[0];
   });

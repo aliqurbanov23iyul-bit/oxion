@@ -1,5 +1,69 @@
 export const languages = ["az", "en", "tr", "ru"];
 const data = {
+  txidInvalid: [
+    "Təsdiq üçün düzgün TXID daxil edin.",
+    "Enter a valid TXID to approve the deposit.",
+    "Onay için geçerli TXID girin.",
+    "Для подтверждения укажите корректный TXID.",
+  ],
+  quantityStep: [
+    "Miqdar addımı",
+    "Quantity step",
+    "Miktar adımı",
+    "Шаг количества",
+  ],
+  quantityStepError: [
+    "Miqdar cütlüyün minimumuna və miqdar addımına uyğun olmalıdır.",
+    "Quantity must satisfy the pair minimum and quantity step.",
+    "Miktar, çiftin minimumuna ve miktar adımına uymalıdır.",
+    "Количество должно соответствовать минимуму и шагу пары.",
+  ],
+  priceStepError: [
+    "Limit qiyməti cütlüyün qiymət addımına uyğun olmalıdır.",
+    "Limit price must satisfy the pair price tick.",
+    "Limit fiyatı çiftin fiyat adımına uymalıdır.",
+    "Лимитная цена должна соответствовать шагу цены пары.",
+  ],
+  tradeBudget: ["USDT məbləği", "USDT amount", "USDT tutarı", "Сумма USDT"],
+  tradeBudgetHint: [
+    "Alışda komissiya daxil ödənilən, satışda komissiyadan sonra alınan məbləğ.",
+    "Amount paid including fees for buys; amount received after fees for sells.",
+    "Alışta komisyon dahil ödenen; satışta komisyon sonrası alınan tutar.",
+    "При покупке — оплата с комиссией; при продаже — получение после комиссии.",
+  ],
+  tradeSizeHint: [
+    "Miqdarı yaz və ya USDT məbləği ilə hesabla.",
+    "Enter quantity or calculate it from a USDT amount.",
+    "Miktar gir veya USDT tutarından hesapla.",
+    "Укажите количество или рассчитайте его по сумме USDT.",
+  ],
+  tradeCalculate: ["Hesabla", "Calculate", "Hesapla", "Рассчитать"],
+  tradeReviewBuy: [
+    "Alış əmrini yoxla",
+    "Review buy order",
+    "Alış emrini incele",
+    "Проверить покупку",
+  ],
+  tradeReviewSell: [
+    "Satış əmrini yoxla",
+    "Review sell order",
+    "Satış emrini incele",
+    "Проверить продажу",
+  ],
+  tradeBaseQuantity: [
+    "Aktiv miqdarı",
+    "Asset quantity",
+    "Varlık miktarı",
+    "Количество актива",
+  ],
+  tradeLiveData: [
+    "Canlı bazar məlumatı",
+    "Live market data",
+    "Canlı piyasa verisi",
+    "Рыночные данные онлайн",
+  ],
+
+  depositAction: ["Depozit et", "Deposit", "Yatır", "Пополнить"],
   cryptoOnly: [
     "Kriptovalyuta",
     "Cryptocurrency",
@@ -14,10 +78,10 @@ const data = {
   ],
 
   depositManualInfo: [
-    "Depozit səhifəsində aktiv və şəbəkə seçin, göstərilən ünvana göndərin, məbləğ və TXID ilə sorğu yaradın. Depozit admin yoxlamasından sonra balansa yazılır. Minimum 10 USDT qarşılığıdır.",
-    "Select an asset and network on the deposit page, transfer to the displayed address, then submit the amount and TXID. Deposits are credited after administrator review. Minimum: 10 USDT equivalent.",
-    "Yatırma sayfasında varlık ve ağ seçin, gösterilen adrese gönderin, tutar ve TXID ile talep oluşturun. Yönetici kontrolünden sonra bakiye eklenir. Minimum: 10 USDT karşılığı.",
-    "Выберите актив и сеть, отправьте на указанный адрес, затем подайте заявку с суммой и TXID. Зачисление после проверки администратором. Минимум: эквивалент 10 USDT.",
+    "Depozit səhifəsində aktiv və şəbəkə seçin, göstərilən ünvana göndərin, məbləği bildirərək sorğu yaradın. Depozit admin yoxlamasından sonra balansa yazılır. Minimum 10 USDT qarşılığıdır.",
+    "Select an asset and network on the deposit page, transfer to the displayed address, then report the amount. Deposits are credited after administrator review. Minimum: 10 USDT equivalent.",
+    "Yatırma sayfasında varlık ve ağ seçin, gösterilen adrese gönderin, tutarı bildirerek talep oluşturun. Yönetici kontrolünden sonra bakiye eklenir. Minimum: 10 USDT karşılığı.",
+    "Выберите актив и сеть, отправьте на указанный адрес, затем подайте заявку с суммой. Зачисление после проверки администратором. Минимум: эквивалент 10 USDT.",
   ],
 
   advancedTools: [
@@ -1171,7 +1235,7 @@ export function errorText(code) {
     PASSWORD_LENGTH: "passwordLength",
     INVALID_EMAIL: "invalidForm",
     INVALID_FORM: "invalidForm",
-    INVALID_TXID: "invalidForm",
+    INVALID_TXID: "txidInvalid",
     INVALID_QR_IMAGE: "qrImageError",
     DEPOSIT_MINIMUM_USD: "depositMinimumUsd",
     UNVERIFIED_DEPOSIT: "invalidForm",
@@ -1190,8 +1254,8 @@ export function errorText(code) {
     INVALID_STATE: "conflict",
     CONNECTION: "connection",
     BELOW_MINIMUM: "invalidAmount",
-    INVALID_QUANTITY_STEP: "invalidAmount",
-    INVALID_PRICE_STEP: "invalidAmount",
+    INVALID_QUANTITY_STEP: "quantityStepError",
+    INVALID_PRICE_STEP: "priceStepError",
     INVALID_NETWORK_ADDRESS: "invalidForm",
     QUOTE_EXPIRED: "quoteExpired",
     QUOTE_CHANGED: "quoteExpired",

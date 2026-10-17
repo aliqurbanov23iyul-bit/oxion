@@ -1,3 +1,4 @@
+import { sizeOrder } from "./order-sizing.js";
 import {
   saveMethod,
   submitDeposit,
@@ -689,7 +690,7 @@ export function createApp(db, env = process.env, services = {}) {
     res.json({
       items: (
         await db.query(
-          "SELECT d.*,CASE WHEN r.approved=TRUE THEN 'confirmed' WHEN r.approved=FALSE THEN 'rejected' ELSE 'awaiting_review' END AS status,r.reason FROM deposit_requests d LEFT JOIN deposit_reviews r ON r.request_id=d.id WHERE d.user_id=$1 ORDER BY d.created_at DESC LIMIT 100",
+          "SELECT d.*,coalesce(r.txid,d.txid) AS txid,CASE WHEN r.approved=TRUE THEN 'confirmed' WHEN r.approved=FALSE THEN 'rejected' ELSE 'awaiting_review' END AS status,r.reason FROM deposit_requests d LEFT JOIN deposit_reviews r ON r.request_id=d.id WHERE d.user_id=$1 ORDER BY d.created_at DESC LIMIT 100",
           [req.auth.user_id],
         )
       ).rows,
@@ -721,6 +722,9 @@ export function createApp(db, env = process.env, services = {}) {
         )
       ).rows,
     }),
+  );
+  app.post("/api/orders/size", auth, verified, async (req, res) =>
+    res.json(await sizeOrder(db, req.auth.user_id, req.body, await markets())),
   );
   app.post("/api/orders/quote", auth, verified, async (req, res) =>
     res.json(
@@ -845,7 +849,7 @@ export function createApp(db, env = process.env, services = {}) {
     res.json({
       items: (
         await db.query(
-          "SELECT d.*,u.uid,u.email,CASE WHEN r.approved=TRUE THEN 'confirmed' WHEN r.approved=FALSE THEN 'rejected' ELSE 'awaiting_review' END AS status FROM deposit_requests d JOIN users u ON u.id=d.user_id LEFT JOIN deposit_reviews r ON r.request_id=d.id ORDER BY d.created_at DESC LIMIT 100",
+          "SELECT d.*,coalesce(r.txid,d.txid) AS txid,u.uid,u.email,CASE WHEN r.approved=TRUE THEN 'confirmed' WHEN r.approved=FALSE THEN 'rejected' ELSE 'awaiting_review' END AS status FROM deposit_requests d JOIN users u ON u.id=d.user_id LEFT JOIN deposit_reviews r ON r.request_id=d.id ORDER BY d.created_at DESC LIMIT 100",
         )
       ).rows,
     }),

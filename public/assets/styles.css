@@ -3308,3 +3308,478 @@ body[data-page="wallet"] .page-content {
     padding-top: 22px;
   }
 }
+/* Header account controls: balance → funding → account tools. */
+.header.has-account .nav {
+  gap: 22px;
+}
+.header.has-account .navlinks {
+  gap: 18px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.header.has-account .navright {
+  gap: 14px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.nav-funds {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 16px;
+  border-right: 1px solid #ffffff18;
+}
+.nav-balance {
+  display: grid;
+  gap: 4px;
+  color: white;
+  min-width: 85px;
+  max-width: 170px;
+  padding: 4px 0;
+}
+.nav-balance-caption {
+  font-size: 10px;
+  color: #98adc5;
+  white-space: nowrap;
+}
+.nav-balance-number {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+}
+.nav-balance-number strong {
+  font-size: 15px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-balance-number small {
+  font-size: 10px;
+  color: #9aafc5;
+}
+.nav-funds .nav-deposit {
+  min-height: 40px;
+  border-radius: 12px;
+  background: #13d0c8;
+  color: #04343b;
+  padding: 10px 14px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.nav-funds .nav-deposit:hover {
+  background: #3ee0d8;
+}
+.nav-deposit .ui-icon {
+  width: 17px;
+  height: 17px;
+}
+.nav-account-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-tool {
+  border-radius: 12px;
+  background: #ffffff06;
+  color: #b5c5d6;
+  min-width: 38px;
+  min-height: 38px;
+}
+.nav-tool:hover {
+  background: #ffffff10;
+  color: white;
+}
+.nav-profile .nav-avatar {
+  min-width: 38px;
+  min-height: 38px;
+  width: 38px;
+  height: 38px;
+  background: #173543;
+  border: 1px solid #2c5863;
+  border-radius: 13px;
+  color: #6ce2d8;
+  font-size: 15px;
+  font-weight: 650;
+  padding: 0;
+}
+.nav-profile .nav-avatar:hover {
+  background: #204755;
+}
+.header.has-account .lang {
+  font-size: 11px;
+  width: 49px;
+  padding: 8px 4px;
+  min-width: 0;
+  order: 3;
+  color: #9fb4cc;
+}
+.nav-account-tools .account-dropdown {
+  right: 0;
+  top: 51px;
+  gap: 6px;
+}
+.mobile-language {
+  display: none;
+}
+@media (min-width: 1001px) and (max-width: 1200px) {
+  .header.has-account .nav {
+    gap: 16px;
+  }
+  .header.has-account .brand {
+    width: 145px;
+    flex-shrink: 0;
+  }
+  .header.has-account .brand img {
+    width: 145px;
+  }
+  .header.has-account .navlinks {
+    gap: 12px;
+    font-size: 12px;
+  }
+  .header.has-account .navright {
+    gap: 9px;
+  }
+  .nav-funds {
+    gap: 10px;
+    padding-right: 10px;
+  }
+  .nav-funds .nav-deposit {
+    padding: 10px;
+  }
+  .nav-account-tools {
+    gap: 6px;
+  }
+}
+@media (max-width: 600px) {
+  .header.has-account .nav {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "brand tools" "funds funds";
+    height: auto;
+    min-height: 128px;
+    gap: 12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .header.has-account .brand {
+    grid-area: brand;
+    width: 139px;
+  }
+  .header.has-account .brand img {
+    width: 139px;
+  }
+  .header.has-account .navright {
+    display: contents;
+  }
+  .header.has-account .navright > .lang {
+    display: none;
+  }
+  .header.has-account .nav-account-tools {
+    grid-area: tools;
+    justify-self: end;
+    gap: 8px;
+  }
+  .header.has-account .nav-funds {
+    grid-area: funds;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 9px 10px 9px 14px;
+    background: #ffffff06;
+    border: 1px solid #ffffff0c;
+    border-radius: 16px;
+    gap: 12px;
+  }
+  .header.has-account .nav-balance {
+    padding: 0;
+    max-width: calc(100% - 130px);
+  }
+  .header.has-account .nav-balance-caption {
+    font-size: 10px;
+  }
+  .header.has-account .nav-balance-number strong {
+    font-size: 16px;
+  }
+  .header.has-account .nav-funds .nav-deposit {
+    min-height: 40px;
+    font-size: 12px;
+    padding: 10px 16px;
+  }
+  .header.has-account .navlinks {
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 70vh;
+    overflow: auto;
+  }
+  .mobile-language {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    color: #9fb4cc;
+    font-size: 12px;
+  }
+  .mobile-language select {
+    width: 84px;
+    padding: 8px 10px;
+    background: #15263b;
+    border: 1px solid #2a3e54;
+    color: white;
+  }
+  .nav-account-tools .account-dropdown {
+    right: 0;
+    max-width: calc(100vw - 30px);
+  }
+  .nav-notifications .account-dropdown {
+    right: -84px;
+  }
+  .nav-account-tools .iconbtn {
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+@media (max-width: 360px) {
+  .header.has-account .brand,
+  .header.has-account .brand img {
+    width: 121px;
+  }
+  .header.has-account .nav-account-tools {
+    gap: 5px;
+  }
+}
+@media (min-width: 1001px) and (max-width: 1200px) {
+  .header.has-account .brand img {
+    width: 204px;
+    left: -30px;
+    top: -30px;
+  }
+}
+@media (max-width: 600px) {
+  .header.has-account .brand img {
+    width: 196px;
+    left: -29px;
+    top: -28px;
+  }
+}
+@media (max-width: 360px) {
+  .header.has-account .brand img {
+    width: 171px;
+    left: -25px;
+    top: -24px;
+  }
+}
+.trade-percentages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin: -4px 0 6px;
+}
+.trade-percentages button {
+  border: 1px solid #e6ebf2;
+  background: #f6f8fa;
+  color: #61768f;
+  border-radius: 10px;
+  padding: 9px 3px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.trade-percentages button:hover {
+  background: #e7f7f4;
+  border-color: #a4ddd4;
+  color: #097d6c;
+}
+.trade-budget-input {
+  display: flex;
+  align-items: center;
+  background: #f3f5f8;
+  border: 1px solid #e4eaf2;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.trade-budget-input input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.trade-budget-input button {
+  flex-shrink: 0;
+  border: 0;
+  background: #e0f2f0;
+  color: #137e79;
+  padding: 10px;
+  border-radius: 10px;
+  margin-right: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+.trade-input-hint {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #7c8ca1;
+  margin: 0;
+}
+.trade-available {
+  background: #f3f5f8;
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 11px;
+  color: #75869b;
+  display: grid;
+  gap: 10px;
+}
+.trade-available > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.trade-available strong {
+  font-size: 11px;
+  color: #263d55;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.trade-available > a {
+  color: #078c87;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 2px;
+}
+.trade-available .ui-icon {
+  width: 13px;
+  height: 13px;
+}
+.trade-costs {
+  display: grid;
+  gap: 12px;
+  margin: 5px 0 8px;
+  padding: 0 2px;
+}
+.trade-costs > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: #708399;
+}
+.trade-costs strong {
+  color: #273c54;
+  font-size: 12px;
+}
+.order-form #trade-submit {
+  width: 100%;
+  border-radius: 14px;
+  min-height: 48px;
+  font-size: 13px;
+}
+.order-form #trade-submit.trade-buy {
+  background: #0aa88c;
+  color: white;
+}
+.order-form #trade-submit.trade-buy:hover {
+  background: #078e76;
+}
+.order-form #trade-submit.trade-sell {
+  background: #d95b6b;
+  color: white;
+}
+.order-form #trade-submit.trade-sell:hover {
+  background: #bf4557;
+}
+.order-form .segmented {
+  border-radius: 16px;
+  margin-bottom: 22px;
+}
+.order-form .segmented button {
+  padding: 13px 8px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+.order-form .segmented button[data-side="SELL"].active {
+  color: #bd4558;
+}
+.book button.book-row {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.book button.book-row:hover {
+  background: #f0f4f8;
+}
+.book button.book-row:focus-visible {
+  outline: 2px solid #1875ff;
+  outline-offset: 1px;
+}
+.order-form form > label {
+  font-size: 12px;
+}
+.order-form input,
+.order-form select {
+  background: #f5f7fa;
+  border-color: #e6ebf2;
+  min-height: 46px;
+}
+#sizing-state:not(:empty) {
+  padding: 10px;
+  background: #fff5e8;
+  border-radius: 12px;
+  color: #8e641e;
+}
+#quantity-asset {
+  font-size: 11px;
+  color: #6e839b;
+  margin-left: auto;
+}
+.trade-summary {
+  border-radius: 22px;
+}
+.chart-toolbar button {
+  border-radius: 9px;
+  padding: 7px;
+}
+.chart-toolbar button.active {
+  border-radius: 9px;
+}
+.trade-grid {
+  gap: 18px;
+}
+@media (max-width: 760px) {
+  .trade-grid > .order-form {
+    grid-row: 1;
+  }
+  .trade-summary {
+    gap: 14px;
+  }
+  .order-form {
+    padding: 22px;
+  }
+  .trade-grid .chart-panel {
+    min-width: 0;
+  }
+  .trade-costs strong {
+    font-size: 13px;
+  }
+  .trade-percentages button {
+    padding: 11px 3px;
+  }
+}
+
+.trade-quantity-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.trade-quantity-label #quantity-asset {
+  margin: 0;
+}

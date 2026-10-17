@@ -1,4 +1,12 @@
-import { api, escape as esc, onForm, notice, table, toast } from "./api.js";
+import {
+  api,
+  escape as esc,
+  onForm,
+  notice,
+  table,
+  toast,
+  requestKey,
+} from "./api.js";
 import { t } from "./i18n.js";
 import { depositCatalog } from "./deposit-catalog.js";
 import { assetLogo } from "./asset-logos.js";
@@ -108,7 +116,7 @@ export async function renderDeposits(standard) {
   ]);
   const assets = [...new Set(methods.items.map((m) => m.asset))];
   standard(
-    `<div class="transfer-layout"><section class="transfer-sheet"><div class="profile-sheet-heading"><span>${t("deposit")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="crypto-rail"><span>${assetLogo("BTC")}${t("cryptoOnly")}</span></div><div class="transfer-select"><span id="selected-asset-icon">${assetLogo(assets[0] || "USDT")}</span><label class="hidden" for="deposit-asset">${t("asset")}</label><select id="deposit-asset" aria-label="${t("asset")}" ${assets.length ? "" : "disabled"}>${assets.length ? assets.map((a) => `<option>${esc(a)}</option>`).join("") : "<option>USDT</option>"}</select></div><div class="transfer-select"><label class="hidden" for="deposit-method">${t("network")}</label><select id="deposit-method" aria-label="${t("network")}" ${assets.length ? "" : "disabled"}><option>—</option></select></div><div class="transfer-minimum"><strong>${l(14)}</strong><p id="deposit-minimum" role="status">${methods.items.length ? t("loading") : l(7)}</p></div><div id="deposit-address">${notice(l(7))}</div>${methods.items.length ? `<details class="transfer-report"><summary>${l(4)}</summary><form id="report-deposit">${input("amount", t("amount"), 'inputmode="decimal"')}${input("txid", "TXID", 'maxlength="90"')}<div data-result></div><button class="btn primary">${l(5)}</button></form></details>` : ""}<div class="transfer-links"><a href="/wallet.html">${t("wallet")}</a><a href="/support.html">${t("support")}</a></div></section><aside class="transfer-aside"><section class="panel"><h3>${t("deposit")}</h3><p class="hint">${l(12)}</p>${notice(l(19), "warn")}</section><section class="panel"><div class="section-title"><h3>${t("history")}</h3><a class="text-link" href="/history.html">${t("viewAll")}</a></div>${table(
+    `<div class="transfer-layout"><section class="transfer-sheet"><div class="profile-sheet-heading"><span>${t("deposit")}</span><a class="profile-close" href="/profile.html" aria-label="${t("profile")}">×</a></div><div class="crypto-rail"><span>${assetLogo("BTC")}${t("cryptoOnly")}</span></div><div class="transfer-select"><span id="selected-asset-icon">${assetLogo(assets[0] || "USDT")}</span><label class="hidden" for="deposit-asset">${t("asset")}</label><select id="deposit-asset" aria-label="${t("asset")}" ${assets.length ? "" : "disabled"}>${assets.length ? assets.map((a) => `<option>${esc(a)}</option>`).join("") : "<option>USDT</option>"}</select></div><div class="transfer-select"><label class="hidden" for="deposit-method">${t("network")}</label><select id="deposit-method" aria-label="${t("network")}" ${assets.length ? "" : "disabled"}><option>—</option></select></div><div class="transfer-minimum"><strong>${l(14)}</strong><p id="deposit-minimum" role="status">${methods.items.length ? t("loading") : l(7)}</p></div><div id="deposit-address">${notice(l(7))}</div>${methods.items.length ? `<details class="transfer-report"><summary>${l(4)}</summary><form id="report-deposit">${input("amount", t("amount"), 'inputmode="decimal"')}<div data-result></div><button class="btn primary">${l(5)}</button></form></details>` : ""}<div class="transfer-links"><a href="/wallet.html">${t("wallet")}</a><a href="/support.html">${t("support")}</a></div></section><aside class="transfer-aside"><section class="panel"><h3>${t("deposit")}</h3><p class="hint">${l(12)}</p>${notice(l(19), "warn")}</section><section class="panel"><div class="section-title"><h3>${t("history")}</h3><a class="text-link" href="/history.html">${t("viewAll")}</a></div>${table(
       [t("asset"), t("amount"), t("status")],
       history.items.map(
         (d) =>
@@ -161,10 +169,15 @@ export async function renderDeposits(standard) {
   asset.onchange = options;
   select.onchange = update;
   options();
+  let depositRequestKey = requestKey();
+  const report = document.querySelector("#report-deposit");
+  report.addEventListener("input", () => (depositRequestKey = requestKey()));
+  asset.addEventListener("change", () => (depositRequestKey = requestKey()));
+  select.addEventListener("change", () => (depositRequestKey = requestKey()));
   onForm("#report-deposit", async (b, f) => {
     await api("/deposit/requests", {
       method: "POST",
-      body: { ...b, method: select.value },
+      body: { ...b, method: select.value, request_key: depositRequestKey },
     });
     f.querySelector("[data-result]").innerHTML = notice(l(6), "success");
   });
@@ -180,7 +193,7 @@ export async function renderDepositAdmin(target) {
       (m) =>
         `<tr><td><span class="coin-name">${assetLogo(m.asset)} ${esc(m.asset)}</span></td><td>${esc(m.network)}</td><td style="overflow-wrap:anywhere">${esc(m.address)}</td><td><button class="btn small outline" data-toggle="${esc(m.id)}">${m.active ? l(3) : l(2)}</button></td></tr>`,
     ),
-  )}</section><section class="panel"><h2>${t("deposit")}</h2>${requests.items.map((r) => `<article class="panel"><p>${esc(r.uid)} · ${esc(r.email)}</p><p>${esc(r.amount)} ${esc(r.asset)} · ${esc(r.network)}</p><p style="overflow-wrap:anywhere">${t("address")}: ${esc(r.address)}<br>TXID: ${esc(r.txid)}</p><p>${esc(status(r.status))}</p>${r.status === "awaiting_review" ? `<form data-review="${esc(r.id)}">${input("reason", l(8), 'minlength="8" maxlength="500"')}<label><input type="checkbox" name="verified"> ${l(9)}</label><label>${t("action")}<select name="decision"><option value="reject">${l(11)}</option><option value="approve">${l(10)}</option></select></label><div data-result></div><button class="btn primary">${t("save")}</button></form>` : ""}</article>`).join("") || notice(t("empty"))}</section>`;
+  )}</section><section class="panel"><h2>${t("deposit")}</h2>${requests.items.map((r) => `<article class="panel"><p>${esc(r.uid)} · ${esc(r.email)}</p><p>${esc(r.amount)} ${esc(r.asset)} · ${esc(r.network)}</p><p style="overflow-wrap:anywhere">${t("address")}: ${esc(r.address)}<br>TXID: ${esc(r.txid)}</p><p>${esc(status(r.status))}</p>${r.status === "awaiting_review" ? `<form data-review="${esc(r.id)}"><label>TXID<input name="txid" maxlength="90" value="${esc(r.txid || "")}"></label>${input("reason", l(8), 'minlength="8" maxlength="500"')}<label><input type="checkbox" name="verified"> ${l(9)}</label><label>${t("action")}<select name="decision"><option value="reject">${l(11)}</option><option value="approve">${l(10)}</option></select></label><div data-result></div><button class="btn primary">${t("save")}</button></form>` : ""}</article>`).join("") || notice(t("empty"))}</section>`;
   const form = target.querySelector("#method-form");
   let image = null,
     reading = false;
@@ -258,11 +271,15 @@ export async function renderDepositAdmin(target) {
   );
   target.querySelectorAll("[data-review]").forEach((f, i) => {
     f.id = "review-" + i;
+    f.elements.decision.onchange = () => {
+      f.elements.txid.required = f.elements.decision.value === "approve";
+    };
     onForm("#" + f.id, async (b) => {
       await api("/admin/deposit-requests/" + f.dataset.review + "/review", {
         method: "POST",
         body: {
           approve: b.decision === "approve",
+          txid: b.txid,
           verified: f.elements.verified.checked,
           reason: b.reason,
         },

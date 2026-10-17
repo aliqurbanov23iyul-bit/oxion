@@ -22,3 +22,10 @@ Profil ekranı istifadəçi adını serverdə saxlayır, USDT mövcud/bloklanmı
 
 
 Depozit və çıxarış ekranları kripto seçimi, aktiv/şəbəkə formaları və kompakt kartlar ilə hazırlanıb. Çıxarış göndərişi hazır deyil: mövcud forma yalnız ETH-SEPOLIA sınaq sorğusunu saxlayır, kripto göndərmir. Tarixçədə depozit iddiaları və çıxarış sorğuları faktiki statusları ilə göstərilir; bütün jurnal hərəkətləri ayrıca açılan hissədə saxlanır. Əmrlər ekranında hamısı/açıq/bağlanmış filtrləri var.
+
+
+## Müştəridən TXID tələb edilmir
+
+Son versiyada müştəri yalnız məbləği bildirir. Brauzer avtomatik sorğu açarı göndərir; eyni sorğunun təkrarı yeni qeyd yaratmır. Sorğu gözləmədədir və balans artmır. Təsdiqləyən admin blokçeyndə köçürməni, məbləği, qəbul ünvanını və istifadəçiyə aid olduğunu yoxlayıb TXID-ni admin formasında daxil edir. Rədd zamanı TXID tələb olunmur. Təsdiqlənmiş TXID şəbəkə üzrə unikal saxlanır; paralel təsdiqlərdən yalnız biri hesaba yazılır. İlkin sorğu dəyişdirilmir, adminin TXID-si ayrıca dəyişməz qərar qeydində saxlanır.
+
+Mövcud baza üçün docs/deposit-no-txid.sql faylını Neon SQL Editor-də Run edin. Yeni quraşdırmada docs/manual-deposits.sql bütün tələb olunan əlavələri ehtiva edir. Əvvəlki sənəddə müştəridən TXID göndərilməsi barədə olan addım bu dəyişikliklə əvəz olunur.

@@ -81,7 +81,42 @@ const telegram =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 3.4 18.2 20c-.3 1.2-1 1.5-2 1l-5.2-3.9-2.5 2.4c-.3.3-.5.5-1 .5l.4-5.3L17.6 6c.4-.4-.1-.6-.6-.3L5 13.3l-5.1-1.6c-1.1-.3-1.1-1.1.2-1.6L20 2.4c.9-.3 1.7.2 1.6 1z"/></svg>';
 
 document.querySelector("#site-header").innerHTML =
-  `<a href="#main" class="skip">${t("home")}</a><header class="header"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" aria-label="${t("language")}">${languages.map((l) => `<option value="${l}" ${l === lang ? "selected" : ""}>${l.toUpperCase()}</option>`).join("")}</select>${me.user ? `${link("wallet", "account-shortcut")}${link("orders", "account-shortcut")}<details class="account-menu"><summary class="iconbtn" aria-label="${t("profile")}">${icon("user")}</summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "security", "wallet", "orders", "history"].map((k) => link(k)).join("")}${me.user.role === "admin" ? `<a href="/admin/">${t("admin")}</a>` : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><details class="account-menu"><summary class="iconbtn" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details>` : `${link("login", "login-link")}${link("signup", "btn small")}`}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div></div></header>`;
+  `<a href="#main" class="skip">${t("home")}</a><header class="header ${me.user ? "has-account" : ""}"><div class="wrap nav">${brand}<nav id="main-nav" class="navlinks" aria-label="${t("platform")}">${["home", "markets", "trade", "promotions", "support"].map((k) => link(k)).join("")}</nav><div class="navright"><select class="lang" data-language aria-label="${t("language")}">${languages.map((l) => '<option value="' + l + '" ' + (l === lang ? "selected" : "") + ">" + l.toUpperCase() + "</option>").join("")}</select>${me.user ? `<div class="nav-funds"><a href="/wallet.html" class="nav-balance" aria-label="${t("available")} · USDT"><span class="nav-balance-caption">${t("available")}</span><span class="nav-balance-number"><strong id="nav-balance-value" aria-live="polite">—</strong><small>USDT</small></span></a><a href="/deposit.html" class="btn nav-deposit">${icon("deposit")}<span>${t("depositAction")}</span></a></div><div class="nav-account-tools"><details class="account-menu nav-notifications"><summary class="iconbtn nav-tool" aria-label="${t("notifications")}">${icon("bell")}</summary><div class="account-dropdown"><strong>${t("notifications")}</strong><p>${t(me.user.verified ? "noNotifications" : "emailRequired")}</p>${!me.user.verified ? link("profile") : ""}</div></details><details class="account-menu nav-profile"><summary class="iconbtn nav-avatar" aria-label="${t("profile")}"><span>${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span></summary><div class="account-dropdown"><a class="account-mini" href="/profile.html"><span class="account-mini-avatar">${esc(Array.from(me.user.display_name || me.user.email)[0].toUpperCase())}</span><span><strong>${esc(me.user.display_name || me.user.email.split("@")[0])}</strong><small>${esc(me.user.uid)}</small></span></a><button class="btn small outline" data-copy="${esc(me.user.uid)}">${icon("copy")} ${t("copy")}</button>${["profile", "wallet", "orders", "history", "security"].map((k) => link(k)).join("")}${me.user.role === "admin" ? '<a href="/admin/">' + t("admin") + "</a>" : ""}<button class="btn danger" id="nav-logout">${t("logout")}</button></div></details><button class="iconbtn mobile-toggle nav-tool" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button></div>` : `${link("login", "login-link")}${link("signup", "btn small")}<button class="iconbtn mobile-toggle" aria-label="${t("platform")}" aria-controls="main-nav" aria-expanded="false">${icon("menu")}</button>`}</div></div></header>`;
+
+async function refreshNavBalance() {
+  if (!me.user || refreshNavBalance.pending) return;
+  refreshNavBalance.pending = true;
+  const el = document.querySelector("#nav-balance-value");
+  try {
+    const r = await api("/wallet");
+    if (el) {
+      el.textContent = money(
+        r.items.find((a) => a.asset === "USDT" && a.bucket === "available")
+          ?.balance || "0",
+      );
+      el.removeAttribute("title");
+    }
+  } catch {
+    if (el) {
+      el.textContent = "—";
+      el.title = t("connection");
+    }
+  } finally {
+    refreshNavBalance.pending = false;
+  }
+}
+if (me.user) {
+  refreshNavBalance();
+  window.addEventListener("focus", refreshNavBalance);
+  window.addEventListener("oxion:balance-changed", refreshNavBalance);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshNavBalance();
+  });
+  setInterval(() => {
+    if (!document.hidden) refreshNavBalance();
+  }, 60000);
+}
+
 document.querySelector("#nav-logout")?.addEventListener("click", async () => {
   try {
     await api("/auth/logout", { method: "POST" });
@@ -94,7 +129,7 @@ document
   .querySelector(".navlinks")
   .insertAdjacentHTML(
     "beforeend",
-    `<div class="mobile-account">${(me.user ? ["wallet", "orders", "history", "profile", "security"] : ["login", "signup"]).map((k) => link(k)).join("")}</div>`,
+    `<div class="mobile-account"><label class="mobile-language">${t("language")}<select data-language aria-label="${t("language")}">${languages.map((l) => `<option value="${l}" ${l === lang ? "selected" : ""}>${l.toUpperCase()}</option>`).join("")}</select></label>${(me.user ? ["wallet", "orders", "history", "profile", "security"] : ["login", "signup"]).map((k) => link(k)).join("")}</div>`,
   );
 document.body.insertAdjacentHTML(
   "beforeend",
@@ -112,7 +147,9 @@ document.addEventListener("keydown", (event) => {
       menu.querySelector("summary").focus();
     });
 });
-document.querySelector(".lang").onchange = (e) => setLanguage(e.target.value);
+document
+  .querySelectorAll("[data-language]")
+  .forEach((select) => (select.onchange = (e) => setLanguage(e.target.value)));
 document.querySelector(".mobile-toggle").onclick = (e) => {
   const open = document.querySelector(".navlinks").classList.toggle("open");
   e.currentTarget.setAttribute("aria-expanded", String(open));
@@ -672,10 +709,12 @@ async function support() {
 
 async function trade() {
   standard(
-    `<div class="trade-summary"><label class="hidden" for="pair">${t("asset")}</label><select id="pair" disabled aria-label="${t("asset")}"><option>BTCUSDT</option></select><label class="pair-search"><span class="hidden">${t("search")}</span><input type="search" disabled id="pair-search" aria-label="${t("search")}" list="pair-options" placeholder="${t("search")}"><button id="pair-apply" type="button" class="iconbtn" aria-label="${t("search")}" disabled>${icon("search")}</button><datalist id="pair-options"></datalist></label><div><span class="hint">${t("price")} (USDT)</span><div class="metric" id="trade-price">—</div></div><div><span class="hint">${t("change")}</span><p class="change" id="trade-change">—</p></div><div><span class="hint">${t("volume")}</span><p id="trade-volume">—</p></div></div>${notice(t("simulationOrder"))}<div class="trade-grid"><section class="panel chart-panel"><div class="chart-toolbar"><strong id="chart-symbol">BTC / USDT</strong>${["1m", "5m", "15m", "1h", "4h", "1d"].map((i) => `<button disabled data-interval="${i}" class="${i === "1h" ? "active" : ""}">${i}</button>`).join("")}</div><div id="chart-state" class="hint" role="status"></div><button id="retry-trade" class="btn small outline" hidden>${t("retry")}</button><svg class="chart" id="candles" role="img" aria-label="${t("chart")}" viewBox="0 0 700 300"></svg><p class="hint">Binance · ${t("marketSub")}</p></section><section class="panel book"><h3>${t("book")}</h3><div class="book-row muted"><span>${t("price")} (USDT)</span><span>${t("quantity")}</span></div><div id="book-asks">${empty()}</div><div class="divider"></div><div id="book-bids"></div></section><section class="panel order-form"><div class="segmented"><button data-side="BUY" class="active">${t("buy")}</button><button data-side="SELL">${t("sell")}</button></div><form id="order-form"><label>${t("action")}<select name="type"><option value="MARKET">${t("market")}</option><option value="LIMIT">${t("limit")}</option></select></label><label id="limit-price" hidden>${t("price")} (USDT)<input name="price" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,18})?"></label>${field("quantity", "quantity", "text", 'inputmode="decimal" pattern="[0-9]+([.][0-9]{1,18})?"')}<div class="hint" id="trade-balance">${me.user ? t("loading") : t("authRequired")}</div><div class="estimates"><div>${t("fee")}<strong>0.10%</strong></div><div>${t("total")} ≈<strong id="order-estimate">—</strong></div></div><div data-result></div><button class="btn primary" ${!me.user ? "disabled" : ""}>${t("review")}</button>${!me.user ? link("login", "text-link") : ""}</form></section></div><section class="section grid2"><div class="panel table-panel"><div class="tabs"><a href="/orders.html">${t("orders")} ${icon("arrow")}</a></div><div id="trade-orders"></div></div><section class="panel"><h3>${t("recentTrades")}</h3><div id="market-trades"></div></section></section>`,
+    `<div class="trade-summary"><label class="hidden" for="pair">${t("asset")}</label><select id="pair" disabled aria-label="${t("asset")}"><option>BTCUSDT</option></select><label class="pair-search"><span class="hidden">${t("search")}</span><input type="search" disabled id="pair-search" aria-label="${t("search")}" list="pair-options" placeholder="${t("search")}"><button id="pair-apply" type="button" class="iconbtn" aria-label="${t("search")}" disabled>${icon("search")}</button><datalist id="pair-options"></datalist></label><div><span class="hint">${t("price")} (USDT)</span><div class="metric" id="trade-price">—</div></div><div><span class="hint">${t("change")}</span><p class="change" id="trade-change">—</p></div><div><span class="hint">${t("volume")}</span><p id="trade-volume">—</p></div></div>${notice(t("simulationOrder"))}<div class="trade-grid"><section class="panel chart-panel"><div class="chart-toolbar"><strong id="chart-symbol">BTC / USDT</strong>${["1m", "5m", "15m", "1h", "4h", "1d"].map((i) => `<button disabled data-interval="${i}" class="${i === "1h" ? "active" : ""}">${i}</button>`).join("")}</div><div id="chart-state" class="hint" role="status"></div><button id="retry-trade" class="btn small outline" hidden>${t("retry")}</button><svg class="chart" id="candles" role="img" aria-label="${t("chart")}" viewBox="0 0 700 300"></svg><p class="hint">Binance · ${t("marketSub")}</p></section><section class="panel book"><h3>${t("book")}</h3><div class="book-row muted"><span>${t("price")} (USDT)</span><span>${t("quantity")}</span></div><div id="book-asks">${empty()}</div><div class="divider"></div><div id="book-bids"></div></section><section class="panel order-form"><div class="segmented"><button data-side="BUY" class="active">${t("buy")}</button><button data-side="SELL">${t("sell")}</button></div><form id="order-form"><label>${t("action")}<select name="type"><option value="MARKET">${t("market")}</option><option value="LIMIT">${t("limit")}</option></select></label><label id="limit-price" hidden>${t("price")} (USDT)<input name="price" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,18})?"></label><label><span class="trade-quantity-label">${t("tradeBaseQuantity")}<span id="quantity-asset">BTC</span></span><input name="quantity" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,18})?" required autocomplete="off"></label><div class="trade-percentages">${[25, 50, 75, 100].map((p) => `<button type="button" data-percent="${p}" ${!me.user ? "disabled" : ""}>${p}%</button>`).join("")}</div><label>${t("tradeBudget")}<span class="trade-budget-input"><input name="budget" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-describedby="budget-hint"><button type="button" id="calculate-size" ${!me.user ? "disabled" : ""}>${t("tradeCalculate")}</button></span></label><p class="trade-input-hint" id="budget-hint">${t("tradeBudgetHint")}</p><p class="trade-input-hint" id="sizing-state" role="status"></p><div class="trade-available" id="trade-balance">${me.user ? t("loading") : t("authRequired")}</div><div class="trade-input-hint" id="pair-rules"></div><div class="trade-costs"><div><span>${t("fee")} (0.10%) ≈</span><strong id="order-fee">—</strong></div><div><span>${t("total")} ≈</span><strong id="order-estimate">—</strong></div></div><div data-result></div><button id="trade-submit" class="btn primary trade-buy" ${!me.user ? "disabled" : ""}>${t("tradeReviewBuy")}</button>${!me.user ? link("login", "text-link") : ""}</form></section></div><section class="section grid2"><div class="panel table-panel"><div class="tabs"><a href="/orders.html">${t("orders")} ${icon("arrow")}</a></div><div id="trade-orders"></div></div><section class="panel"><h3>${t("recentTrades")}</h3><div id="market-trades"></div></section></section>`,
   );
   let selected =
-      new URLSearchParams(location.search).get("symbol") || "BTCUSDT",
+      new URLSearchParams(location.search).get("symbol") ||
+      localStorage.getItem("oxion-pair") ||
+      "BTCUSDT",
     interval = "1h",
     side = "BUY",
     currentPrice = null,
@@ -684,51 +723,159 @@ async function trade() {
       (me.user && sessionStorage.getItem("oxion-order-key-" + me.user.uid)) ||
       requestKey();
   const f = document.querySelector("#order-form");
+  let sizingRevision = 0;
+  function resetOrderKey() {
+    key = requestKey();
+    if (me.user) sessionStorage.removeItem("oxion-order-key-" + me.user.uid);
+  }
+  function pairChanged() {
+    resetOrderKey();
+    localStorage.setItem("oxion-pair", selected);
+    f.quantity.value = "";
+    f.budget.value = "";
+    f.price.value = "";
+    sizingRevision++;
+    document.querySelector("#sizing-state").textContent = "";
+  }
+  function updateSide() {
+    const submit = document.querySelector("#trade-submit");
+    submit.textContent = t(
+      side === "BUY" ? "tradeReviewBuy" : "tradeReviewSell",
+    );
+    submit.classList.toggle("trade-sell", side === "SELL");
+    submit.classList.toggle("trade-buy", side === "BUY");
+    document
+      .querySelector(".order-form")
+      .classList.toggle("selling", side === "SELL");
+    document.querySelectorAll("[data-side]").forEach((btn) => {
+      const active = btn.dataset.side === side;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+  }
   f.type.onchange = () => {
+    resetOrderKey();
+    f.budget.value = "";
     document.querySelector("#limit-price").hidden = f.type.value !== "LIMIT";
     f.price.required = f.type.value === "LIMIT";
+    sizingRevision++;
     estimate();
   };
   function estimate() {
-    const p = f.type.value === "LIMIT" ? f.price.value : currentPrice;
-    document.querySelector("#order-estimate").textContent =
-      p && f.quantity.value
-        ? money(
-            Number(p) *
-              Number(f.quantity.value) *
-              (side === "BUY" ? 1.001 : 0.999),
-            8,
-          ) + " USDT"
-        : "—";
+    const p = Number(f.type.value === "LIMIT" ? f.price.value : currentPrice),
+      q = Number(f.quantity.value),
+      valid = Number.isFinite(p) && p > 0 && Number.isFinite(q) && q > 0;
+    document.querySelector("#order-estimate").textContent = valid
+      ? money(p * q * (side === "BUY" ? 1.001 : 0.999), 8) + " USDT"
+      : "—";
+    document.querySelector("#order-fee").textContent = valid
+      ? money(p * q * 0.001, 8) + " USDT"
+      : "—";
   }
-  f.quantity.oninput = estimate;
-  f.price.oninput = estimate;
+  f.quantity.oninput = () => {
+    resetOrderKey();
+    sizingRevision++;
+    f.budget.value = "";
+    document.querySelector("#sizing-state").textContent = "";
+    estimate();
+  };
+  f.price.oninput = () => {
+    resetOrderKey();
+    f.budget.value = "";
+    sizingRevision++;
+    estimate();
+  };
+  f.budget.oninput = () => {
+    resetOrderKey();
+    sizingRevision++;
+    f.quantity.value = "";
+    document.querySelector("#sizing-state").textContent = "";
+    estimate();
+  };
+  async function size(percent) {
+    resetOrderKey();
+    if (!me.user) {
+      toast(t("authRequired"), true);
+      return;
+    }
+    const revision = ++sizingRevision,
+      out = document.querySelector("#sizing-state");
+    out.textContent = t("loading");
+    try {
+      const result = await api("/orders/size", {
+        method: "POST",
+        body: {
+          symbol: selected,
+          side,
+          type: f.type.value,
+          price: f.price.value,
+          ...(percent !== undefined ? { percent } : { budget: f.budget.value }),
+        },
+      });
+      if (revision !== sizingRevision) return;
+      f.quantity.value = result.quantity.replace(
+        /(\.\d*?[1-9])0+$|\.0+$/,
+        "$1",
+      );
+      f.budget.value = result.total.replace(/(\.\d*?[1-9])0+$|\.0+$/, "$1");
+      out.textContent = "";
+      estimate();
+    } catch (e) {
+      if (revision === sizingRevision) out.textContent = e.message;
+    }
+  }
+  document.querySelector("#calculate-size").onclick = () => size();
+  f.budget.onkeydown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      size();
+    }
+  };
+  document
+    .querySelectorAll("[data-percent]")
+    .forEach((btn) => (btn.onclick = () => size(Number(btn.dataset.percent))));
   document.querySelectorAll("[data-side]").forEach(
-    (b) =>
-      (b.onclick = () => {
-        side = b.dataset.side;
-        document
-          .querySelectorAll("[data-side]")
-          .forEach((x) => x.classList.toggle("active", x === b));
+    (btn) =>
+      (btn.onclick = () => {
+        side = btn.dataset.side;
+        f.budget.value = "";
+        resetOrderKey();
+        sizingRevision++;
+        document.querySelector("#sizing-state").textContent = "";
+        updateSide();
         estimate();
+        balance();
       }),
   );
+  document.querySelector(".book").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-book-price]");
+    if (!btn) return;
+    f.type.value = "LIMIT";
+    f.price.value = btn.dataset.bookPrice;
+    f.type.onchange();
+    f.price.focus();
+  });
   async function balance() {
     if (!me.user) return;
-    const r = await api("/wallet");
-    const a = side === "BUY" ? "USDT" : selected.replace("USDT", "");
-    const available =
-        r.items.find((b) => b.asset === a && b.bucket === "available")
-          ?.balance || "0",
-      locked =
-        r.items.find((b) => b.asset === a && b.bucket === "locked")?.balance ||
-        "0";
-    document.querySelector("#trade-balance").textContent =
-      `${t("available")}: ${money(available, 8)} ${a} · ${t("locked")}: ${money(locked, 8)} ${a}`;
+    const a = side === "BUY" ? "USDT" : selected.replace(/USDT$/, "");
+    try {
+      const r = await api("/wallet");
+      if (a !== (side === "BUY" ? "USDT" : selected.replace(/USDT$/, "")))
+        return;
+      const available =
+          r.items.find((b) => b.asset === a && b.bucket === "available")
+            ?.balance || "0",
+        locked =
+          r.items.find((b) => b.asset === a && b.bucket === "locked")
+            ?.balance || "0";
+      document.querySelector("#trade-balance").innerHTML =
+        `<span>${t("available")}<strong>${money(available, 8)} ${esc(a)}</strong></span><span>${t("locked")}<strong>${money(locked, 8)} ${esc(a)}</strong></span><a href="/deposit.html">${t("depositAction")} ${icon("arrow")}</a>`;
+    } catch (e) {
+      document.querySelector("#trade-balance").textContent = e.message;
+    }
   }
-  document
-    .querySelectorAll("[data-side]")
-    .forEach((b) => b.addEventListener("click", balance));
+  updateSide();
+  balance();
   let lastUpdate = null;
   async function load() {
     const thisGeneration = ++generation;
@@ -753,7 +900,7 @@ async function trade() {
         document.querySelector(selector).innerHTML = items
           .map(
             (r, i) =>
-              `<div class="book-row ${cls}" style="--depth:${Math.max(1, Math.min(100, (Number(r[1]) / Math.max(...items.map((item) => Number(item[1])))) * 100))}%"><span>${money(r[0], 5)}</span><span>${money(r[1], 6)}</span></div>`,
+              `<button type="button" data-book-price="${esc(r[0])}" aria-label="${t("price")} ${esc(r[0])} USDT" class="book-row ${cls}" style="--depth:${Math.max(1, Math.min(100, (Number(r[1]) / Math.max(...items.map((item) => Number(item[1])))) * 100))}%"><span>${money(r[0], 5)}</span><span>${money(r[1], 6)}</span></button>`,
           )
           .join("");
       document.querySelector("#market-trades").innerHTML = table(
@@ -778,6 +925,22 @@ async function trade() {
         .querySelector("#trade-change")
         .classList.toggle("negative", Number(m?.change) < 0);
       document.querySelector("#trade-volume").textContent = money(m?.volume, 0);
+      document.querySelector("#quantity-asset").textContent = selected.replace(
+        /USDT$/,
+        "",
+      );
+      const lot = m?.filters?.find((f) => f.filterType === "LOT_SIZE");
+      document.querySelector("#pair-rules").textContent = lot
+        ? t("quantity") +
+          ": " +
+          t("minimum") +
+          " " +
+          lot.minQty +
+          " · " +
+          t("quantityStep") +
+          " " +
+          lot.stepSize
+        : "";
       estimate();
       balance();
     } catch (e) {
@@ -808,6 +971,7 @@ async function trade() {
     if (match) {
       if (selected !== match.symbol) {
         selected = match.symbol;
+        pairChanged();
         document.querySelector("#pair").value = selected;
         load();
       }
@@ -828,6 +992,7 @@ async function trade() {
     choosePair(document.querySelector("#pair-search").value);
   document.querySelector("#pair").onchange = (e) => {
     selected = e.target.value;
+    pairChanged();
     load();
   };
   document.querySelectorAll("[data-interval]").forEach(
@@ -886,6 +1051,9 @@ async function trade() {
     key = requestKey();
     sessionStorage.removeItem("oxion-order-key-" + me.user.uid);
     toast(t("orderCreated"));
+    f.quantity.value = "";
+    f.budget.value = "";
+    estimate();
     orders(document.querySelector("#trade-orders"));
     balance();
   });

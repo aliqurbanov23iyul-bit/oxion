@@ -77,6 +77,41 @@ test("account API saves names, protects deposit admin routes, serves uploaded an
       ).status,
       400,
     );
+    const claimResponse = await call("/deposit/requests", "u", {
+      method: m.id,
+      amount: "12",
+      request_key: "customer-claim-one",
+    });
+    assert.equal(claimResponse.status, 201);
+    const claim = await claimResponse.json();
+    assert.equal(claim.txid, null);
+    const decision = {
+      approve: true,
+      verified: true,
+      reason: "verified on chain and account ownership",
+    };
+    assert.equal(
+      (
+        await call(
+          "/admin/deposit-requests/" + claim.id + "/review",
+          "a",
+          decision,
+        )
+      ).status,
+      400,
+    );
+    assert.equal(
+      (
+        await call("/admin/deposit-requests/" + claim.id + "/review", "a", {
+          ...decision,
+          txid: "0x" + "c".repeat(64),
+        })
+      ).status,
+      200,
+    );
+    const history = await (await call("/deposit/requests")).json();
+    assert.equal(history.items[0].status, "confirmed");
+    assert.equal(history.items[0].txid, "c".repeat(64));
     const saved = await call(
       "/profile",
       "u",

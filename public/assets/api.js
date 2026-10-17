@@ -29,6 +29,16 @@ export async function api(path, options = {}) {
   const data = await r.json().catch(() => ({ error: "INTERNAL_ERROR" }));
   if (!r.ok)
     throw Object.assign(Error(errorText(data.error)), { code: data.error });
+  if (
+    options.method &&
+    !["GET", "HEAD"].includes(options.method.toUpperCase()) &&
+    /^\/(orders|withdrawals|admin\/(deposit-requests|adjustments|orders|withdrawals))(\/|$)/.test(
+      path,
+    ) &&
+    !path.endsWith("/quote") &&
+    !path.endsWith("/size")
+  )
+    window.dispatchEvent(new Event("oxion:balance-changed"));
   return data;
 }
 export async function loadMe() {
