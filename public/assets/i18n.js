@@ -1,3 +1,4 @@
+import { directionalCopy } from "./directional-i18n.js";
 export const languages = ["az", "en", "tr", "ru"];
 const data = {
   requests: ["Sorğular", "Requests", "Talepler", "Заявки"],
@@ -1255,6 +1256,7 @@ Object.assign(data, {
   ],
   waiting: ["Gözləyin…", "Please wait…", "Bekleyin…", "Подождите…"],
 });
+Object.assign(data, directionalCopy);
 export let lang = languages.includes(localStorage.getItem("oxion-language"))
   ? localStorage.getItem("oxion-language")
   : "az";
@@ -1269,6 +1271,11 @@ export function setLanguage(value) {
 }
 export function errorText(code) {
   const map = {
+    REAL_MONEY_DISABLED: "demoDisabled",
+    DEMO_RULES_CHANGED: "demoRulesChanged",
+    DEMO_MAX_OPEN: "demoMaxOpen",
+    FEED_UNAVAILABLE: "sourceStale",
+    DEMO_LIMIT: "demoLimits",
     AUTH_REQUIRED: "authRequired",
     SERVICE_NOT_CONFIGURED: "hostingMissing",
     TERMS_REQUIRED: "termsRequired",

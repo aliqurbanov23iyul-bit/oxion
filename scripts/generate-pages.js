@@ -26,12 +26,12 @@ const pages = {
   404: ["notfound", "Səhifə tapılmadı"],
   "admin/index": ["admin", "İdarəetmə"],
 };
-await mkdir("public/admin", { recursive: true });
+await mkdir("server/views", { recursive: true });
 for (const [file, [key, title]] of Object.entries(pages))
   await writeFile(
-    `public/${file}.html`,
+    file === "admin/index" ? "server/views/admin.html" : `public/${file}.html`,
     `<!doctype html>
-<html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="OXION — spot bazarları üçün yerli sınaq platforması. Real ticarət aktiv deyil."><meta name="theme-color" content="#080f20"><meta name="robots" content="noindex,nofollow"><title>OXION · ${title}</title><link rel="stylesheet" href="/assets/styles.css"><script type="module" src="/assets/app.js"></script></head>
+<html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="OXION — virtual balansla müddətli Qalxacaq / Düşəcək demo terminalı."><meta name="theme-color" content="#080f20"><meta name="robots" content="noindex,nofollow"><title>OXION · ${title}</title><link rel="stylesheet" href="/assets/styles.css"><script type="module" src="/assets/app.js"></script></head>
 <body data-page="${key}"><div id="site-header"></div><main id="main"><div class="wrap page-head"><h1>${title}</h1><p class="loading" role="status">OXION · Yüklənir…</p><noscript>Bu platforma JavaScript tələb edir. Real ticarət və köçürmələr aktiv deyil.</noscript></div></main><div id="site-footer"></div></body></html>\n`,
   );
 console.log("Created " + Object.keys(pages).length + " separate HTML pages.");

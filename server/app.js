@@ -1,3 +1,4 @@
+import { directionalRoutes } from "./directional-routes.js";
 import { sizeOrder } from "./order-sizing.js";
 import {
   saveMethod,
@@ -278,11 +279,28 @@ export function createApp(db, env = process.env, services = {}) {
         }
       : {}),
   });
+  // The current product is a virtual directional demo. Legacy money/spot writes
+  // remain available only to the explicitly injected internal regression harness.
+  if (!services.legacySpot) {
+    app.use("/api", (req, res, next) => {
+      if (
+        !["GET", "HEAD", "OPTIONS"].includes(req.method) &&
+        (/^\/(orders|withdrawals|deposit\/requests)(\/|$)/.test(req.path) ||
+          /^\/admin\/(adjustments|withdrawals|deposit-requests|orders|testnet|deposit-methods)(\/|$)/.test(
+            req.path,
+          ))
+      )
+        return res.status(403).json({ error: "REAL_MONEY_DISABLED" });
+      next();
+    });
+  }
+  directionalRoutes(app, db, { auth, verified, admin, key });
   app.get("/api/status", (req, res) =>
     res.json({
-      mode: env.HOSTED === "true" ? "hosted-simulation" : "local-simulation",
+      mode: "directional-demo",
+      demo: true,
       database: db.kind,
-      execution: "local simulation; no exchange settlement",
+      execution: "virtual directional demo; no real-money settlement",
       custody: false,
       email: !!mailer,
       google: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
