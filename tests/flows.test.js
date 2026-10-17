@@ -406,7 +406,7 @@ test("campaign inactive, custody unconfigured and no live money claims", async (
   const s = (await call("/api/status")).data;
   assert.equal(s.liveMoney, false);
   assert.equal(s.custody, false);
-  assert.equal(s.mode, "directional-demo");
+  assert.equal(s.mode, "directional");
   assert.equal((await call("/api/auth/google")).r.status, 503);
   const cancelled = await call("/api/auth/google/callback?error=access_denied");
   assert.equal(cancelled.r.status, 302);

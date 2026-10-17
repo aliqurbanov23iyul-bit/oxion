@@ -12,7 +12,16 @@ const safe = (v) =>
   JSON.parse(
     JSON.stringify(v, (_k, v) => (typeof v === "bigint" ? Number(v) : v)),
   );
-export function directionalRoutes(app, db, { auth, verified, admin, key }) {
+export function directionalRoutes(
+  app,
+  db,
+  { auth, verified, admin, key, demoEnabled = false },
+) {
+  app.use(
+    ["/api/demo/account", "/api/demo/positions", "/api/demo/ledger"],
+    (_req, res, next) =>
+      demoEnabled ? next() : res.status(403).json({ error: "DEMO_DISABLED" }),
+  );
   app.get("/api/demo/market", async (req, res) => {
     const asset = String(req.query.asset || "XAUUSD");
     if (!demoAssets.some((a) => a.symbol === asset))

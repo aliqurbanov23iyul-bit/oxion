@@ -5070,3 +5070,266 @@ p,
     padding: 18px;
   }
 }
+.trade-asset-toggle {
+  display: none;
+}
+.trade-fund-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #50ddd2;
+  font-size: 13px;
+}
+.trade-fund-link svg {
+  width: 17px;
+  height: 17px;
+}
+.stake-presets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.stake-presets button {
+  background: #192d43;
+  color: #b8cfdf;
+  border: 1px solid #36516b;
+  border-radius: 10px;
+  min-height: 40px;
+  font-size: 13px;
+}
+.stake-presets button:active {
+  background: #245160;
+}
+.direction-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.direction-actions > small {
+  font-size: 12px;
+  color: #afc7db;
+  text-align: center;
+}
+.direction-actions .direction-button {
+  width: 100%;
+}
+@media (max-width: 760px) {
+  .directional-page main > .wrap {
+    padding: 0 12px;
+  }
+  .directional-terminal {
+    gap: 12px;
+  }
+  .trade-asset-toggle {
+    display: flex;
+    grid-column: 1/-1;
+    grid-row: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid #29425a;
+    border-radius: 15px;
+    background: #102136;
+    color: #9eb7cd;
+    padding: 12px 16px;
+    min-height: 50px;
+  }
+  .trade-asset-toggle strong {
+    color: #fff;
+  }
+  .direction-sidebar {
+    display: none;
+    grid-row: 2;
+    padding: 14px;
+  }
+  .direction-sidebar.assets-open {
+    display: block;
+  }
+  .direction-categories {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+  }
+  .direction-categories button {
+    flex: 0 0 auto;
+    min-height: 40px;
+  }
+  .direction-assets {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 220px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .direction-assets .direction-asset {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .direction-asset strong {
+    font-size: 12px;
+  }
+  .direction-quick,
+  .direction-side-brand {
+    display: none;
+  }
+  .direction-market-heading {
+    grid-row: 3;
+    padding: 0 4px;
+  }
+  .direction-chart-card {
+    grid-row: 4;
+  }
+  .direction-chart-card canvas {
+    height: 210px;
+  }
+  .direction-chart-bottom > span:last-child {
+    display: none;
+  }
+  .direction-order {
+    grid-row: 5;
+    padding: 16px;
+  }
+  .direction-positions {
+    grid-row: 6;
+  }
+  .direction-account {
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    grid-template-columns: 1fr auto;
+  }
+  .direction-account > .trade-account-label {
+    grid-column: 1;
+  }
+  .direction-account > .trade-fund-link {
+    grid-column: 2;
+  }
+  .direction-account > strong {
+    grid-column: 1/-1;
+    font-size: 25px;
+  }
+  .direction-account > small {
+    font-size: 11px;
+  }
+  .direction-order .stake-presets {
+    order: 3;
+    grid-column: 1/-1;
+  }
+  .direction-order .direction-payout {
+    order: 4;
+  }
+  .direction-order .direction-return {
+    order: 5;
+  }
+  .direction-order #direction-error {
+    order: 6;
+  }
+  .direction-order .direction-login {
+    order: 7;
+  }
+  .direction-order .direction-rule {
+    order: 8;
+  }
+  .direction-actions {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: #0b192bf5;
+    border-top: 1px solid #2b435d;
+    z-index: 25;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    box-shadow: 0 -8px 25px #0002;
+  }
+  .direction-actions > small {
+    grid-column: 1/-1;
+    font-size: 11px;
+  }
+  .direction-actions .direction-button {
+    min-height: 52px;
+    font-size: 15px;
+    margin: 0;
+  }
+  .directional-page {
+    padding-bottom: 110px;
+  }
+  .directional-page .support-float {
+    bottom: 125px;
+  }
+  .direction-order #main-trade-state .notice {
+    font-size: 11px;
+    line-height: 1.55;
+    padding: 12px;
+  }
+  .direction-return > span {
+    font-size: 12px;
+  }
+  .direction-stake input {
+    font-size: 18px;
+    min-height: 46px;
+  }
+  .direction-stake button {
+    min-width: 42px;
+    min-height: 46px;
+  }
+}
+.trade-availability {
+  border: 1px solid #36516b;
+  border-radius: 12px;
+  background: #16293e;
+  color: #c0d2e1;
+  padding: 0 12px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.trade-availability summary {
+  cursor: pointer;
+  padding: 12px 0;
+  line-height: 1.5;
+  min-height: 44px;
+}
+.trade-availability p {
+  line-height: 1.65;
+  margin: 0 0 12px;
+}
+@media (max-width: 760px) {
+  .direction-chart-card canvas {
+    height: 170px;
+  }
+  .direction-chart-tools {
+    padding: 9px 12px;
+  }
+  .direction-chart-tools button {
+    min-height: 36px;
+  }
+  .direction-account {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    gap: 4px;
+  }
+  .direction-account > .trade-account-label {
+    font-size: 12px;
+  }
+  .direction-account > .trade-fund-link,
+  .direction-account > small {
+    display: none;
+  }
+  .direction-account > strong {
+    font-size: 20px;
+  }
+  .trade-availability {
+    margin: 12px 0;
+    font-size: 11px;
+  }
+  .directional-page .support-float {
+    display: none;
+  }
+}

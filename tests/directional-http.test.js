@@ -15,10 +15,14 @@ test("demo API authenticates, isolates virtual money, ignores forged outcomes an
       "INSERT INTO sessions(hash,user_id,csrf,expires_at) VALUES($1,'http-user','csrf',now()+interval '1 hour')",
       [hash("demo-http-session")],
     );
-    server = createApp(db, {
-      APP_ORIGIN: "http://localhost:4340",
-      ENCRYPTION_KEY: "a".repeat(64),
-    }).listen(0, "127.0.0.1");
+    server = createApp(
+      db,
+      {
+        APP_ORIGIN: "http://localhost:4340",
+        ENCRYPTION_KEY: "a".repeat(64),
+      },
+      { demoEnabled: true },
+    ).listen(0, "127.0.0.1");
     await new Promise((r) => server.once("listening", r));
     const base = "http://127.0.0.1:" + server.address().port;
     async function call(path, body, session = true, extra = {}) {
@@ -89,6 +93,56 @@ test("demo API authenticates, isolates virtual money, ignores forged outcomes an
     assert.equal((await call("/admin/demo")).status, 403);
     await db.query("UPDATE users SET totp_enabled=TRUE WHERE id='http-user'");
     assert.equal((await call("/admin/demo")).status, 200);
+  } finally {
+    if (server) await new Promise((r) => server.close(r));
+    await db.close();
+  }
+});
+
+test("normal deployment disables virtual account grants and virtual order APIs", async () => {
+  const db = await database(null, "memory://");
+  let server;
+  try {
+    server = createApp(db, {
+      APP_ORIGIN: "http://localhost:4340",
+      ENCRYPTION_KEY: "a".repeat(64),
+    }).listen(0, "127.0.0.1");
+    await new Promise((r) => server.once("listening", r));
+    const base = "http://127.0.0.1:" + server.address().port;
+    for (const path of [
+      "/api/demo/account",
+      "/api/demo/positions",
+      "/api/demo/ledger",
+    ]) {
+      const r = await fetch(base + path);
+      assert.equal(r.status, 403);
+      assert.equal((await r.json()).error, "DEMO_DISABLED");
+    }
+    const r = await fetch(base + "/api/demo/positions", {
+      method: "POST",
+      headers: {
+        Origin: "http://localhost:4340",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: "10",
+        direction: "UP",
+        asset: "BTCUSD",
+        duration: 3,
+      }),
+    });
+    assert.equal(r.status, 403);
+    assert.equal((await r.json()).error, "DEMO_DISABLED");
+    assert.equal(
+      (await db.query("SELECT count(*)::int AS n FROM demo_accounts")).rows[0]
+        .n,
+      0,
+    );
+    assert.equal(
+      (await db.query("SELECT count(*)::int AS n FROM demo_positions")).rows[0]
+        .n,
+      0,
+    );
   } finally {
     if (server) await new Promise((r) => server.close(r));
     await db.close();

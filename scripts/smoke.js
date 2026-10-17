@@ -26,7 +26,7 @@ assert.equal(
 assert.equal((await fetch(origin + "/not-an-oxion-page")).status, 404);
 const mode = await (await fetch(origin + "/api/status")).json();
 assert.equal(mode.liveMoney, false);
-assert.equal(mode.mode, "directional-demo");
+assert.equal(mode.mode, "directional");
 console.log(
   `${pages.length} public HTML pages, shared assets, protected admin, 404 and local-only status passed.`,
 );

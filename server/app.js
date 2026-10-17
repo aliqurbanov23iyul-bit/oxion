@@ -294,13 +294,19 @@ export function createApp(db, env = process.env, services = {}) {
       next();
     });
   }
-  directionalRoutes(app, db, { auth, verified, admin, key });
+  directionalRoutes(app, db, {
+    auth,
+    verified,
+    admin,
+    key,
+    demoEnabled: services.demoEnabled === true,
+  });
   app.get("/api/status", (req, res) =>
     res.json({
-      mode: "directional-demo",
-      demo: true,
+      mode: "directional",
+      demo: false,
       database: db.kind,
-      execution: "virtual directional demo; no real-money settlement",
+      execution: "not configured; real-money execution disabled",
       custody: false,
       email: !!mailer,
       google: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
